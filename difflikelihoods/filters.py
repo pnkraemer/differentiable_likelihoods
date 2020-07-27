@@ -27,6 +27,7 @@ import numpy as np
 from difflikelihoods import auxiliary as aux
 from abc import ABC, abstractmethod
 
+
 class Filter(ABC):
     """
     Filter class. Intended to be used as superclass for
@@ -37,6 +38,7 @@ class Filter(ABC):
         b) can do "filter()", "initialise()", "update()" and "predict()"
     Methods of this class are intended to be overwritten by subclasses.
     """
+
     def __init__(self, statespacemodel, *args):
         """
         Initialises a filter with a state space model.
@@ -85,6 +87,7 @@ class KalmanFilter(Filter):
     The methods initialise(), update() and
     predict() overwrite the superclass' methods.
     """
+
     def __init__(self, ssm):
         """
         Initialise a Kalman filter with a state space model.
@@ -117,7 +120,7 @@ class KalmanFilter(Filter):
         means, covars = self._init_arrays(len(dataset), len(self.ssm.init_mean))
         means[0], covars[0] = self.initialise()
         for i in range(1, len(dataset)):
-            pmean, pcovar = self.predict(means[i-1], covars[i-1])
+            pmean, pcovar = self.predict(means[i - 1], covars[i - 1])
             means[i], covars[i] = self.update(pmean, pcovar, dataset[i])
         return means, covars
 
@@ -183,8 +186,7 @@ class KalmanFilter(Filter):
         measmat = self.ssm.get_measmat(*args)
         res = self.compute_residual(data, measmat, mpred)
         kgain = self.compute_kalmangain(cpred, measmat, meascovar)
-        mean, covar = self.compute_correction(mpred, cpred,
-                                              res, measmat, kgain)
+        mean, covar = self.compute_correction(mpred, cpred, res, measmat, kgain)
         return mean, covar
 
     def _set_meascovar(self, uncert, *optional):
@@ -258,5 +260,6 @@ class KalmanFilter(Filter):
         mean = mpred + kgain.dot(res)
         covar = updatemat.dot(cpred)
         return mean, covar
+
 
 # END OF FILE

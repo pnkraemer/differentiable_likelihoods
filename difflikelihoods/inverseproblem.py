@@ -22,14 +22,16 @@ from difflikelihoods import auxiliary as aux
 class InvProblemData:
     """
     """
+
     evalpts: np.ndarray
     data: np.ndarray
-    var: float 
+    var: float
 
 
-class InvProblemLklhd():
+class InvProblemLklhd:
     """
     """
+
     def __init__(self, ipdata, ivp, linsolver, stepsize, with_jacob=False):
         """
         Args:
@@ -43,8 +45,7 @@ class InvProblemLklhd():
             kprefact:   ndarray of shape (ndata*ndim, ntsteps-1).
                         Vertical stack of all kprefactors at timesteps.
         """
-        assert ivp.is_linearised is True, \
-            "Please enter a LinearisedODE object"
+        assert ivp.is_linearised is True, "Please enter a LinearisedODE object"
         self.ipdata = ipdata
         self.ivp = ivp
         self.linsolver = linsolver
@@ -60,20 +61,16 @@ class InvProblemLklhd():
         """
         tsteps, __, __, __, __ = self.linsolver.solve(self.ivp, self.stepsize)
         evalpts = self.ipdata.evalpts
-        assert(np.in1d(evalpts, tsteps).prod()== 1)
+        assert np.in1d(evalpts, tsteps).prod() == 1
         evalidcs = [list(tsteps).index(evalpt) for evalpt in evalpts]
         return tsteps, evalidcs
 
     def compute_kernel_prefactor(self):
         """
         """
-        return linearisation.compute_kernel_prefactor(self.linsolver.filt.ssm,
-                                                      self.ipdata.var,
-                                                      self.tsteps,
-                                                      self.ipdata.evalpts)
-
-
-
+        return linearisation.compute_kernel_prefactor(
+            self.linsolver.filt.ssm, self.ipdata.var, self.tsteps, self.ipdata.evalpts
+        )
 
     # def lklhdeval(self, par):
     #     """
@@ -106,8 +103,6 @@ class InvProblemLklhd():
     #     # returnval = custom_gaussian_pdf(self.ipdata.data, self.mean, self.ipvar)
     #     return np.exp(-self.potenteval(par))
 
-
-
     def potenteval(self, par):
         """
         """
@@ -116,10 +111,6 @@ class InvProblemLklhd():
         returnval = custom_potential(self.ipdata.data, self.mean, self.ipvar)
         # print("potential", returnval, "at", par, "with lkld", np.exp(-returnval))
         return returnval
-
-
-
-
 
     def gradeval(self, par):
         """
@@ -157,7 +148,6 @@ class InvProblemLklhd():
         # print("Grad:", (grad))
         return grad
 
-
     def hesseval(self, par):
         """
         For a likelihood of the form l(s) ~ exp(-E(s)),
@@ -186,7 +176,6 @@ class InvProblemLklhd():
         hess = np.dot(self.jacob.T, solved)
         return hess
 
-
     # def precond_gradeval(self, par):
     #     """
     #     """
@@ -194,8 +183,6 @@ class InvProblemLklhd():
     #     hess = self.hesseval(par)
     #     grad = self.gradeval(par)
     #     return np.linalg.solve(hess, grad)
-
-
 
     def forwardsolve(self, par):
         """
@@ -219,14 +206,14 @@ class InvProblemLklhd():
         """
         self.ivp.params = par
         __, mean, stdev, rhs_parts, __ = self.linsolver.solve(self.ivp, self.stepsize)
-        meanguess, stdevguess  = self.extract_measurement_guesses(mean, stdev)
+        meanguess, stdevguess = self.extract_measurement_guesses(mean, stdev)
         flat_meanguess = meanguess.flatten()
-        ipvar = np.diag((self.ipdata.var + stdevguess**2).flatten())
+        ipvar = np.diag((self.ipdata.var + stdevguess ** 2).flatten())
         # print(ipvar)
         if self.with_jacob is True:
-            jacob = linearisation.compute_jacobian(self.ipdata.evalpts,
-                                                   self.tsteps, self.kprefact,
-                                                   rhs_parts)
+            jacob = linearisation.compute_jacobian(
+                self.ipdata.evalpts, self.tsteps, self.kprefact, rhs_parts
+            )
         else:
             jacob = None
         return flat_meanguess, ipvar, jacob
@@ -258,6 +245,7 @@ class InvProblemLklhd():
 class InvProblemLklhdClassic(InvProblemLklhd):
     """
     """
+
     def forwardsolve(self, par):
         """
         Solves ODE at parameter par and returns mean, stdev and Jacobian
@@ -280,18 +268,17 @@ class InvProblemLklhdClassic(InvProblemLklhd):
         """
         self.ivp.params = par
         __, mean, stdev, rhs_parts, __ = self.linsolver.solve(self.ivp, self.stepsize)
-        meanguess, stdevguess  = self.extract_measurement_guesses(mean, stdev)
+        meanguess, stdevguess = self.extract_measurement_guesses(mean, stdev)
         flat_meanguess = meanguess.flatten()
         ipvar = np.diag((self.ipdata.var * np.ones(stdevguess.shape)).flatten())
         # print(ipvar)
         if self.with_jacob is True:
-            jacob = linearisation.compute_jacobian(self.ipdata.evalpts,
-                                                   self.tsteps, self.kprefact,
-                                                   rhs_parts)
+            jacob = linearisation.compute_jacobian(
+                self.ipdata.evalpts, self.tsteps, self.kprefact, rhs_parts
+            )
         else:
             jacob = None
         return flat_meanguess, ipvar, jacob
-
 
 
 def custom_gaussian_pdf(loc, mean, covar):
@@ -306,7 +293,6 @@ def custom_gaussian_pdf(loc, mean, covar):
     """
     reshaped_loc = loc.flatten().reshape((1, len(loc.flatten())))
     return aux.multivariate_gaussian(reshaped_loc, mean, covar)[0]
-
 
 
 def custom_potential(loc, mean, covar):
@@ -349,4 +335,4 @@ def multivariate_potential(ptset2, meanvec, covmat):
     # else:
     #     gaussian = matvecprod/2.
     # return scaling * gaussian
-    return matvecprod/2
+    return matvecprod / 2

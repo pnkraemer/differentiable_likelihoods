@@ -35,6 +35,7 @@ class AbstractODESolver(ABC):
     different initialisation and where a data stream is replaced
     by function evaluation.
     """
+
     def __init__(self, filt):
         """
         Initialise the ODE-solver with a filter
@@ -56,7 +57,7 @@ class AbstractODESolver(ABC):
         Represent ODESolver with input information.
         Relies on __repr__ of SSM and Filter.
         """
-        return "ODESolver(filter=%r) "% (self.filt)
+        return "ODESolver(filter=%r) " % (self.filt)
 
     def solve(self, ode, stepsize):
         """
@@ -70,14 +71,13 @@ class AbstractODESolver(ABC):
             means:      shape (N, d, q+1), contains mean estimates of states
             stdevs:     shape (N, d, q+1), contains std.-dev. of means
         """
-        assert(self.ode_matches_ssm(ode) is True)
+        assert self.ode_matches_ssm(ode) is True
         self.discretise_statespacemodel(stepsize)
         tsteps, means, covars = self.make_arrays(ode, stepsize)
         meanpred, covarpred = self.initialise(ode)
         for i, time in enumerate(tsteps):
             data, uncert = self.evaluate_model(ode, meanpred, covarpred, time)
-            means[i], covars[i] = self.filt.update(meanpred, covarpred,
-                                                   data, uncert)
+            means[i], covars[i] = self.filt.update(meanpred, covarpred, data, uncert)
             meanpred, covarpred = self.filt.predict(means[i], covars[i])
         means, stdevs = self.organise(means, covars)
         return tsteps, means, stdevs
@@ -86,12 +86,13 @@ class AbstractODESolver(ABC):
         """
         Checks compliance of ode-dim and ssm-dim.
         """
-        if(np.isscalar(ode.initval) is True):
+        if np.isscalar(ode.initval) is True:
             dim = 1
         else:
             dim = len(ode.initval)
-        assert(dim == self.filt.ssm.dim),\
-            "The ODE and prior state space model have different dimensions"
+        assert (
+            dim == self.filt.ssm.dim
+        ), "The ODE and prior state space model have different dimensions"
         return True
 
     def discretise_statespacemodel(self, *args):
@@ -117,8 +118,9 @@ class AbstractODESolver(ABC):
         tmax = ode.tmax
         tsteps = np.arange(t0, tmax + stepsize, stepsize)
         means = np.zeros((len(tsteps), self.dim * (self.q + 1)))
-        covars = np.zeros((len(tsteps), self.dim * (self.q + 1),
-                           self.dim * (self.q + 1)))
+        covars = np.zeros(
+            (len(tsteps), self.dim * (self.q + 1), self.dim * (self.q + 1))
+        )
         return tsteps, means, covars
 
     def initialise(self, ode):
@@ -137,10 +139,10 @@ class AbstractODESolver(ABC):
         self.obsmat = self.compute_obsmat()
         init_mean, init_covar = self.filt.initialise()
         res = self.filt.compute_residual(y0, self.obsmat, init_mean)
-        kgain = self.filt.compute_kalmangain(init_covar, self.obsmat,
-                                             meascovar=y0_unc)
-        mean, covar = self.filt.compute_correction(init_mean, init_covar,
-                                                   res, self.obsmat, kgain)
+        kgain = self.filt.compute_kalmangain(init_covar, self.obsmat, meascovar=y0_unc)
+        mean, covar = self.filt.compute_correction(
+            init_mean, init_covar, res, self.obsmat, kgain
+        )
         return mean, covar
 
     def read_initial_values(self, ode):
@@ -220,8 +222,8 @@ class AbstractODESolver(ABC):
                 ...)
         """
         stdevs = self.extract_stdevs(covars)
-        means = means.reshape((len(means), self.dim, self.q + 1), order='C')
-        stdevs = stdevs.reshape((len(stdevs), self.dim, self.q + 1), order='C')
+        means = means.reshape((len(means), self.dim, self.q + 1), order="C")
+        stdevs = stdevs.reshape((len(stdevs), self.dim, self.q + 1), order="C")
         return means, stdevs
 
     def extract_stdevs(self, covars):
@@ -250,6 +252,7 @@ class ODESolver(AbstractODESolver):
         >>> lin_ode = ode.LinearODE(t0=0.1, tmax=2.0, params=1.0, initval=0.9)
         >>> t, m, c = solver.solve(lin_ode, stepsize=0.01)
     """
+
     def __init__(self, ssm, filtertype="kalman"):
         """
         Initialise the ODE-solver with a prior (statespace) model
@@ -278,21 +281,18 @@ class ODESolver(AbstractODESolver):
         if filtertype == "kalman":
             filt = filters.KalmanFilter(ssm)
         elif filtertype == "particle":
-            raise NotImplementedError(
-                "Particle filter implementation is future work.")
+            raise NotImplementedError("Particle filter implementation is future work.")
         elif filtertype == "EKF":
-            raise NotImplementedError(
-                "EKF implementation is future work.")
+            raise NotImplementedError("EKF implementation is future work.")
         elif filtertype == "UKF":
-            raise NotImplementedError(
-                "UKF implementation is future work.")
+            raise NotImplementedError("UKF implementation is future work.")
         elif filtertype == "custom":
-            raise NotImplementedError(
-                "Custom filter implementation is future work.")
+            raise NotImplementedError("Custom filter implementation is future work.")
         else:
             raise NameError(
                 "Please enter a valid filter key:\
-{'kalman'(, 'particle', 'EKF', 'UKF', 'custom')}")
+{'kalman'(, 'particle', 'EKF', 'UKF', 'custom')}"
+            )
         return filt
 
 
@@ -308,12 +308,13 @@ def get_trajectory(states_or_stdevs, idx_dim, idx_q):
     Returns:
         traj:               trajectory of demanded indices
     """
-    assert(idx_dim < states_or_stdevs.shape[1]), \
-        "Spatial coordinate index out of bounds"
-    assert(idx_q < states_or_stdevs.shape[2]), \
-        "Derivative coordinate index out of bounds"
+    assert idx_dim < states_or_stdevs.shape[1], "Spatial coordinate index out of bounds"
+    assert (
+        idx_q < states_or_stdevs.shape[2]
+    ), "Derivative coordinate index out of bounds"
     traj = states_or_stdevs[:, idx_dim, idx_q]
     return traj
+
 
 def get_trajectory_ddim(states_or_stdevs, d, idx_q):
     """
@@ -328,12 +329,13 @@ def get_trajectory_ddim(states_or_stdevs, d, idx_q):
     Returns:
         traj: trajectory of demanded indices
     """
-    assert(d-1 < states_or_stdevs.shape[1]), \
-        "Spatial coordinate index out of bounds"
-    assert(idx_q < states_or_stdevs.shape[2]), \
-        "Derivative coordinate index out of bounds"
+    assert d - 1 < states_or_stdevs.shape[1], "Spatial coordinate index out of bounds"
+    assert (
+        idx_q < states_or_stdevs.shape[2]
+    ), "Derivative coordinate index out of bounds"
     traj = states_or_stdevs[:, list(range(d)), idx_q]
     return traj
+
 
 def get_trajectory_multidim(states_or_stdevs, idx_dims, idx_q):
     """
@@ -347,11 +349,14 @@ def get_trajectory_multidim(states_or_stdevs, idx_dims, idx_q):
     Returns:
         traj: trajectory of demanded indices
     """
-    assert(all(i < states_or_stdevs.shape[1] for i in idx_dims)), \
-        "Spatial coordinate index out of bounds"
-    assert(idx_q < states_or_stdevs.shape[2]), \
-        "Derivative coordinate index out of bounds"
+    assert all(
+        i < states_or_stdevs.shape[1] for i in idx_dims
+    ), "Spatial coordinate index out of bounds"
+    assert (
+        idx_q < states_or_stdevs.shape[2]
+    ), "Derivative coordinate index out of bounds"
     traj = states_or_stdevs[:, idx_dims, idx_q]
     return traj
+
 
 # END OF FILE

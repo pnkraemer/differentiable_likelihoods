@@ -12,7 +12,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 from difflikelihoods import ode
-from difflikelihoods import odesolver 
+from difflikelihoods import odesolver
 from difflikelihoods import statespace
 
 # Solve ODE
@@ -28,13 +28,10 @@ mtraj2 = odesolver.get_trajectory(m, 1, 0)
 # Plot solution
 plt.title("Restricted Two-Body Problem")
 plt.plot(mtraj1, mtraj2, label="Trajectory")
-plt.plot(mtraj1[0], mtraj2[0], 'o', label="Starting point at t=t0")
-plt.plot(mtraj1[-1], mtraj2[-1], 'o', label="Endpoint at t=tmax")
+plt.plot(mtraj1[0], mtraj2[0], "o", label="Starting point at t=t0")
+plt.plot(mtraj1[-1], mtraj2[-1], "o", label="Endpoint at t=tmax")
 plt.legend()
 plt.show()
-
-
-
 
 
 # END OF FILE

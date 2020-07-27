@@ -15,6 +15,7 @@ from abc import ABC, abstractmethod
 class LogDensity(ABC):
     """
     """
+
     def __init__(self, logdens, loggrad=None, loghess=None):
         """
         """
@@ -40,7 +41,6 @@ class LogDensity(ABC):
         if self.loggrad is None:
             raise TypeError("Gradient is not available")
         return self.loggrad(loc)
-
 
     def hesseval(self, loc):
         """

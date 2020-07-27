@@ -34,6 +34,7 @@ class SSM(ABC):
         m_0: initial mean (init_mean)
         C_0: initial covariance (init_covar)
     """
+
     @abstractmethod
     def sample_trajectory(self, nsteps):
         """
@@ -83,8 +84,8 @@ class InvariantSSM(SSM):
         Y_(t+1) = H X_(t+1) + R
     and thus "self.get_*" return existing matrices.
     """
-    def __init__(self, transmat, transcovar, measmat, meascovar,
-                 init_mean, init_covar):
+
+    def __init__(self, transmat, transcovar, measmat, meascovar, init_mean, init_covar):
         """
         Initialises invariant state space model.
 
@@ -96,15 +97,18 @@ class InvariantSSM(SSM):
             init_mean: covariance of measurement map (R), shape (n,)
             init_covar: covariance of measurement map (R), shape (n, n)
         """
-        assert(self.inputs_are_arrays(transmat, transcovar, measmat,
-                                      meascovar, init_mean, init_covar) is True)
+        assert (
+            self.inputs_are_arrays(
+                transmat, transcovar, measmat, meascovar, init_mean, init_covar
+            )
+            is True
+        )
         self.transmat = transmat
         self.transcovar = transcovar
         self.measmat = measmat
         self.meascovar = meascovar
         self.init_mean = init_mean
         self.init_covar = init_covar
-
 
     def __repr__(self):
         """
@@ -113,8 +117,9 @@ class InvariantSSM(SSM):
         d = len(self.transmat)
         return "statespace.InvariantSSM() instance in d=%r" % d
 
-    def inputs_are_arrays(self, transmat, transcovar, measmat, meascovar,
-                          init_mean, init_covar):
+    def inputs_are_arrays(
+        self, transmat, transcovar, measmat, meascovar, init_mean, init_covar
+    ):
         """
         Checks whether inputs are suitable numpy arrays.
 
@@ -130,20 +135,25 @@ class InvariantSSM(SSM):
         Returns:
             True: if all shapes are as expected
         """
-        assert(self.input_is_array(transmat, 2) is True), \
-            "Please input a 2d array for transmat"
-        assert(self.input_is_array(transcovar, 2) is True), \
-            "Please input a 2d array for transcovar"
-        assert(self.input_is_array(measmat, 2) is True), \
-            "Please input a 2d array for measmat"
-        assert(self.input_is_array(meascovar, 2) is True), \
-            "Please input a 2d array for meascovar"
-        assert(self.input_is_array(init_mean, 1) is True), \
-            "Please input a 1d array for init_mean"
-        assert(self.input_is_array(init_covar, 2) is True), \
-            "Please input a 2d array for init_covar"
+        assert (
+            self.input_is_array(transmat, 2) is True
+        ), "Please input a 2d array for transmat"
+        assert (
+            self.input_is_array(transcovar, 2) is True
+        ), "Please input a 2d array for transcovar"
+        assert (
+            self.input_is_array(measmat, 2) is True
+        ), "Please input a 2d array for measmat"
+        assert (
+            self.input_is_array(meascovar, 2) is True
+        ), "Please input a 2d array for meascovar"
+        assert (
+            self.input_is_array(init_mean, 1) is True
+        ), "Please input a 1d array for init_mean"
+        assert (
+            self.input_is_array(init_covar, 2) is True
+        ), "Please input a 2d array for init_covar"
         return True
-
 
     def input_is_array(self, arr, dim):
         """
@@ -161,8 +171,8 @@ class InvariantSSM(SSM):
             input_is_array(np.random.rand(2,3), 2): True
             input_is_array(np.random.rand(2,3), 3): False
         """
-        assert(isinstance(arr, np.ndarray)), "Please enter a %ud shaped array" % dim
-        assert(len(arr.shape) == dim), "Please enter a %ud shaped array" % dim
+        assert isinstance(arr, np.ndarray), "Please enter a %ud shaped array" % dim
+        assert len(arr.shape) == dim, "Please enter a %ud shaped array" % dim
         return True
 
     def sample_trajectory(self, nsteps):
@@ -180,7 +190,7 @@ class InvariantSSM(SSM):
         traj[0] = self._get_first_state()
         obs[0] = self._observe(traj[0])
         for i in range(1, nsteps):
-            traj[i] = self._iterate_state(traj[i-1])
+            traj[i] = self._iterate_state(traj[i - 1])
             obs[i] = self._observe(traj[i])
         return obs
 
@@ -282,6 +292,7 @@ class IBM(InvariantSSM):
         the rest is a measurement model and should be able to
         be varied.
     """
+
     def __init__(self, q, dim, diffconst=1.0):
         """
         Initialise IBM(q) model. Here, n = q+1 and l = 1.
@@ -315,7 +326,7 @@ class IBM(InvariantSSM):
         Returns:
             init_mean: shape (d(q+1),)
         """
-        init_mean = np.zeros(self.dim*(self.q + 1))
+        init_mean = np.zeros(self.dim * (self.q + 1))
         return init_mean
 
     def _compute_init_covar(self):
@@ -328,7 +339,6 @@ class IBM(InvariantSSM):
         init_covar_1d = np.eye(self.q + 1)
         init_covar = self._kronecker(init_covar_1d)
         return init_covar
-
 
     def _compute_measmat(self):
         """
@@ -368,7 +378,6 @@ class IBM(InvariantSSM):
         self.transmat = self._compute_transmat(stepsize)
         self.transcovar = self._compute_transcovar(stepsize)
 
-
     def _compute_transmat(self, h):
         """
         Computes state transition matrix A(h).
@@ -380,7 +389,7 @@ class IBM(InvariantSSM):
         """
         ah_1d = np.diag(np.ones(self.q + 1), 0)
         for i in range(self.q):
-            offdiagonal = h**(i+1) / np.math.factorial(i+1) * np.ones(self.q-i)
+            offdiagonal = h ** (i + 1) / np.math.factorial(i + 1) * np.ones(self.q - i)
             ah_1d += np.diag(offdiagonal, i + 1)
         ah = self._kronecker(ah_1d)
         return ah
@@ -394,12 +403,14 @@ class IBM(InvariantSSM):
         Returns:
             qh: covariance Q(h) of transition, shape (d(q+1), d(q=1))
         """
-        qh_1d = np.zeros((self.q+1, self.q+1))
-        for i in range(self.q+1):
-            for j in range(self.q+1):
+        qh_1d = np.zeros((self.q + 1, self.q + 1))
+        for i in range(self.q + 1):
+            for j in range(self.q + 1):
                 idx = 2 * self.q + 1 - i - j
-                nominator = self.diffconst**2 * h**idx
-                denominator = (idx * np.math.factorial(self.q - i) * np.math.factorial(self.q - j))
+                nominator = self.diffconst ** 2 * h ** idx
+                denominator = (
+                    idx * np.math.factorial(self.q - i) * np.math.factorial(self.q - j)
+                )
                 qh_1d[i, j] = nominator / denominator
         qh = self._kronecker(qh_1d)
         return qh
@@ -417,5 +428,3 @@ class IBM(InvariantSSM):
         eye_d = np.eye(self.dim)
         kronmtrx = np.kron(eye_d, mtrx)
         return kronmtrx
-
-

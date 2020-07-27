@@ -17,9 +17,10 @@ from difflikelihoods import statespace
 from difflikelihoods import linearisation
 
 import code
-from difflikelihoods.sampling import metropolishastings_nd 
+from difflikelihoods.sampling import metropolishastings_nd
 import matplotlib.pyplot as plt
 import functools as ft
+
 
 def metropolishastings(nsamps, iplklhd, init_state, pwidth, sampler):
     """
@@ -40,17 +41,19 @@ def metropolishastings(nsamps, iplklhd, init_state, pwidth, sampler):
         probs:      (potentially unnormalised) probabilities of states
     """
     if sampler == "lang":
-        samples, probs, ratio = metropolishastings_nd(nsamps,
-            iplklhd.lklhdeval, init_state, pwidth, sampler, iplklhd.gradeval)
+        samples, probs, ratio = metropolishastings_nd(
+            nsamps, iplklhd.lklhdeval, init_state, pwidth, sampler, iplklhd.gradeval
+        )
     else:
-        samples, probs, ratio = metropolishastings_nd(nsamps,
-            iplklhd.lklhdeval, init_state, pwidth, sampler)
+        samples, probs, ratio = metropolishastings_nd(
+            nsamps, iplklhd.lklhdeval, init_state, pwidth, sampler
+        )
     if ratio < 0.5 or ratio > 0.7:
         print("Careful: ratio of %s is off (ratio=%.2f)" % (sampler, ratio))
     return samples[:, 0], probs[:, 0]
 
 
-class InvProblemLklhd():
+class InvProblemLklhd:
     """
     Likelihood object for ODE-based inverse problems in 1d.
 
@@ -74,6 +77,7 @@ class InvProblemLklhd():
         forwardsolve: evaluate forward map of inverse problem
         gradeval:   evaluate gradient of negative log-likelihood
     """
+
     def __init__(self, evalpt, data, solver, ivp, stepsize, kprefact, with_jacob=False):
         self.kernel_prefact = kprefact
         self.solver = solver
@@ -118,9 +122,11 @@ class InvProblemLklhd():
         unc = odesolver.get_trajectory(v, 0, 0)[-1]
         vari = ivpnoise + unc
         if self.with_jacob is True:
-            jacob = linearisation.compute_jacobian(self.evalpt, tsteps, self.kernel_prefact, rhs_parts)
+            jacob = linearisation.compute_jacobian(
+                self.evalpt, tsteps, self.kernel_prefact, rhs_parts
+            )
         else:
-            jacob = None 
+            jacob = None
         return mean, vari, jacob
 
     def gradeval(self, theta):
@@ -132,14 +138,14 @@ class InvProblemLklhd():
         Returns:
             grad:   evaluation of gradient at theta
         """
-        assert(self.with_jacob is True), "Please set with_jacob to True."
+        assert self.with_jacob is True, "Please set with_jacob to True."
         grad = self.jacob * np.abs(self.mean - self.data) / self.vari
         return grad
 
 
 def gaussian1d(z, m, p):
     """Evaluates 1d Gaussian PDF"""
-    return np.exp(-0.5*np.abs(z - m)**2/p)/np.sqrt(2*np.pi*p)
+    return np.exp(-0.5 * np.abs(z - m) ** 2 / p) / np.sqrt(2 * np.pi * p)
 
 
 def compute_kernel_prefactor(evalpt, tsteps, q):
@@ -157,13 +163,14 @@ def create_data(solver, ivp, thetatrue, stepsize, ivpnoise):
     """
     Create artificial data for inverse problem.
     """
-    noise = np.sqrt(ivpnoise)*np.random.randn()
+    noise = np.sqrt(ivpnoise) * np.random.randn()
     ivp.params = thetatrue
     tsteps, m, __, __, __ = solver.solve(ivp, stepsize)
     evalpt = np.array([tsteps[-1]])
     means = odesolver.get_trajectory(m, 0, 0)
     data = means[-1] + noise
     return evalpt, data
+
 
 np.random.seed(1)
 
@@ -184,18 +191,26 @@ solver = linsolver.LinearisedODESolver(ibm)
 pwidth = 0.004
 
 # Create Data and Jacobian
-ivp = linode.LinearODE(initial_time, end_time, params=thetatrue, initval=initial_value, initval_unc=0.0)
+ivp = linode.LinearODE(
+    initial_time, end_time, params=thetatrue, initval=initial_value, initval_unc=0.0
+)
 evalpt, data = create_data(solver, ivp, thetatrue, 1e-04, ivpnoise)
 tsteps, __, __, __, __ = solver.solve(ivp, stepsize=h)
 evalpt = np.array(tsteps[[-1]])
-kernel_prefactor = linearisation.compute_kernel_prefactor(ibm, 0., tsteps, evalpt)
+kernel_prefactor = linearisation.compute_kernel_prefactor(ibm, 0.0, tsteps, evalpt)
 
 # Sample states from Markov chain
 ivp.params = init_theta
-lklhd_grad = InvProblemLklhd(evalpt, data, solver, ivp, h, kernel_prefactor, with_jacob=True)
+lklhd_grad = InvProblemLklhd(
+    evalpt, data, solver, ivp, h, kernel_prefactor, with_jacob=True
+)
 lklhd_nograd = InvProblemLklhd(evalpt, data, solver, ivp, h, kernel_prefactor)
-lang_thetas, lang_guesses = metropolishastings(nsamps, lklhd_grad, init_theta, pwidth, "lang")
-rw_thetas, rw_guesses = metropolishastings(nsamps, lklhd_nograd, init_theta, pwidth, "rw")
+lang_thetas, lang_guesses = metropolishastings(
+    nsamps, lklhd_grad, init_theta, pwidth, "lang"
+)
+rw_thetas, rw_guesses = metropolishastings(
+    nsamps, lklhd_nograd, init_theta, pwidth, "rw"
+)
 
 
 # Plot states
@@ -205,8 +220,8 @@ fig.suptitle("Metropolis-Hastings for a Simple Inverse Problem", fontsize=16)
 
 
 # Plot Langevin States
-ax1.axvline(x=0.99, linestyle=':', color="black")
-ax1.axvline(x=0.25, linestyle='--', color="black")
+ax1.axvline(x=0.99, linestyle=":", color="black")
+ax1.axvline(x=0.25, linestyle="--", color="black")
 ax1.set_title("Langevin")
 ax1.scatter(lang_thetas, lang_guesses)
 ax1.hist(lang_thetas, density=True, alpha=0.1)
@@ -214,11 +229,16 @@ ax1.set_xlim((0, 1))
 
 
 # Plot RW States
-ax2.axvline(x=0.99, linestyle=':', label="init_state", color="black")
-ax2.axvline(x=0.25, linestyle='--', label="true_param", color="black")
+ax2.axvline(x=0.99, linestyle=":", label="init_state", color="black")
+ax2.axvline(x=0.25, linestyle="--", label="true_param", color="black")
 ax2.set_title("Random Walk")
 ax2.scatter(rw_thetas, rw_guesses, label="N=%u Samples" % len(rw_thetas))
-ax2.hist(rw_thetas, density=True, alpha=0.1, label="Histogram of N=%u Samples" % len(rw_thetas))
+ax2.hist(
+    rw_thetas,
+    density=True,
+    alpha=0.1,
+    label="Histogram of N=%u Samples" % len(rw_thetas),
+)
 ax2.set_xlim((0, 1))
 
 fig.legend()

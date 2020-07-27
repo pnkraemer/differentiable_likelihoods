@@ -60,7 +60,7 @@ def compute_linearisation(ssm, initial_value, derivative_data, prdct_tsteps):
     if np.isscalar(derivative_data[2]) is not True:
         raise TypeError("derivative_data[2] needs to be scalar.")
     tsteps, rhs_parts, measvar = derivative_data
-    assert(np.prod(np.in1d(prdct_tsteps, tsteps))==1)
+    assert np.prod(np.in1d(prdct_tsteps, tsteps)) == 1
     kernel_prefactor = compute_kernel_prefactor(ssm, measvar, tsteps, prdct_tsteps)
     constant_term = np.tile(initial_value, len(prdct_tsteps))
     jacobian = compute_jacobian(prdct_tsteps, tsteps, kernel_prefactor, rhs_parts)
@@ -84,21 +84,21 @@ def compute_kernel_prefactor(ssm, measvar, tsteps, prdct_tsteps):
     Returns:
         prefactor:      the kernel prefactor, shape (ndata*ndim, ntsteps-1)
     """
-    assert(np.prod(np.in1d(prdct_tsteps, tsteps))==1)
+    assert np.prod(np.in1d(prdct_tsteps, tsteps)) == 1
     prdct_idcs = get_prdct_idcs(prdct_tsteps, tsteps)
-    prefactor = np.zeros([len(prdct_idcs) * ssm.dim, len(tsteps)-1])
+    prefactor = np.zeros([len(prdct_idcs) * ssm.dim, len(tsteps) - 1])
     (kds, dkds_plus_mvar) = kernel_matrices(ssm, tsteps, measvar)
     ###########################################################################
-    # compute kernel prefactor for all data indices 
+    # compute kernel prefactor for all data indices
     #
-    # (nb: they are the same for all dimensions 
-    #   if the kernel is the same for all dimensions 
+    # (nb: they are the same for all dimensions
+    #   if the kernel is the same for all dimensions
     #   as currently implemented)
     #
     ###########################################################################
     for l, prdct_idx in enumerate(prdct_idcs):
         content = compute_kernel_prefactor_at_idx(kds, dkds_plus_mvar, prdct_idx)
-        prefactor[l*ssm.dim: (l+1)*ssm.dim, :prdct_idx] = content
+        prefactor[l * ssm.dim : (l + 1) * ssm.dim, :prdct_idx] = content
     #     print(l, prdct_idx, content)
     # sys.exit()
     return prefactor
@@ -120,10 +120,10 @@ def get_prdct_idcs(prdct_tsteps, tsteps):
     for (idx, time) in enumerate(prdct_tsteps):
 
         # find index of prdct_tsteps in tsteps and save it to idcs
-        idcs[idx] = tsteps.tolist().index(time)   
+        idcs[idx] = tsteps.tolist().index(time)
 
     idcs = idcs.astype(int)
-    assert((tsteps[idcs] == prdct_tsteps).all())
+    assert (tsteps[idcs] == prdct_tsteps).all()
 
     return idcs
 
@@ -143,10 +143,10 @@ def kernel_matrices(ssm, tsteps, measvar):
                     plus measvar on the diagonal, shape (ntsteps-1, ntsteps-1)
     """
     # move the time axis to tmin = 0
-    tsteps_from_t0 = tsteps - tsteps[0]    
+    tsteps_from_t0 = tsteps - tsteps[0]
 
     # nb: indices [1:] so that the first time point is not used because it has variance 0
-    kds = get_kds(ssm, tsteps_from_t0)   
+    kds = get_kds(ssm, tsteps_from_t0)
     dkds_plus_mvar = get_dkds_plus_mvar(ssm, tsteps_from_t0, measvar)
 
     return (kds, dkds_plus_mvar)
@@ -177,7 +177,7 @@ def get_dkds_plus_mvar(ssm, tsteps_t0, measvar):
         covariance matrix of kernel cov.ibm_dcovd on tsteps plus measvar on 
         the diagonal, shape (ntsteps-1, ntsteps-1)
     """
-    return get_dkds(ssm, tsteps_t0) + measvar * np.eye(len(tsteps_t0)-1) 
+    return get_dkds(ssm, tsteps_t0) + measvar * np.eye(len(tsteps_t0) - 1)
 
 
 def get_dkds(ssm, tsteps_t0):
@@ -209,9 +209,10 @@ def compute_kernel_prefactor_at_idx(kds, dkds_plus_mvar, prdct_idx):
         the kernel prefactor for prdct_idx, shape (1, prdct_idx)
     """
     assert prdct_idx > 0, "Data point seems to at t0"
-    kd_mat = kds[prdct_idx-1, :prdct_idx].reshape([prdct_idx, 1])
+    kd_mat = kds[prdct_idx - 1, :prdct_idx].reshape([prdct_idx, 1])
     dkd_plus_measvar_mat = dkds_plus_mvar[:prdct_idx, :prdct_idx]
     return np.linalg.solve(dkd_plus_measvar_mat, kd_mat).T
+
 
 def compute_jacobian(prdct_tsteps, tsteps, kernel_prefactor, rhs_parts):
     """
@@ -242,7 +243,9 @@ def compute_jacobian(prdct_tsteps, tsteps, kernel_prefactor, rhs_parts):
 
     data_factor = rhs_parts[1:] - rhs_parts[0]
     jacobian_wo_prior = compute_jacobian_wo_prior(kernel_prefactor, data_factor)
-    jacobian = compute_jacobian_with_prior(jacobian_wo_prior, prdct_tsteps, tsteps, rhs_parts)
+    jacobian = compute_jacobian_with_prior(
+        jacobian_wo_prior, prdct_tsteps, tsteps, rhs_parts
+    )
     return jacobian
 
 
@@ -267,7 +270,9 @@ def compute_jacobian_wo_prior(kernel_prefactor, data_factor):
 
     # compute Jacobian (one dimension at a time)
     for j in range(ode_dim):
-        jacobian_wo_prior[j::ode_dim] = kernel_prefactor[j::ode_dim] @ data_factor[:, :, j]
+        jacobian_wo_prior[j::ode_dim] = (
+            kernel_prefactor[j::ode_dim] @ data_factor[:, :, j]
+        )
 
     return jacobian_wo_prior
 
@@ -290,9 +295,14 @@ def compute_jacobian_with_prior(jacobian_wo_prior, prdct_tsteps, tsteps, rhs_par
         jacobian:           the Jacobian matrix, shape (ndata*ndim, npar)
     """
     ode_dim = rhs_parts.shape[2]
-    data_dists = prdct_tsteps - tsteps[0]  # compute distance of prdct_tsteps to initial time
+    data_dists = (
+        prdct_tsteps - tsteps[0]
+    )  # compute distance of prdct_tsteps to initial time
     jacobian = np.zeros(jacobian_wo_prior.shape)
     for (idx, data_dist) in enumerate(data_dists):
-        jacobian[idx*ode_dim:(idx+1)*ode_dim] = jacobian_wo_prior[idx*ode_dim:(idx+1)*ode_dim] + data_dist * rhs_parts[0].T
+        jacobian[idx * ode_dim : (idx + 1) * ode_dim] = (
+            jacobian_wo_prior[idx * ode_dim : (idx + 1) * ode_dim]
+            + data_dist * rhs_parts[0].T
+        )
 
-    return jacobian 
+    return jacobian

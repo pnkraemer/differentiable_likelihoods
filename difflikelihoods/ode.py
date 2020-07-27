@@ -40,6 +40,7 @@ class ODE(ABC):
     For usage, refer to CustomODE() or to the specialised
     ODE classes such as LinearODE().
     """
+
     def __init__(self, t0, tmax, initval, initval_unc=0.0):
         """
         Initialises basic ODE attributes.
@@ -61,8 +62,12 @@ class ODE(ABC):
         Represent ODE object and its parameters, e.g.:
             ODE(t0=0.0, tmax=1.0, initval=2.0, initval_unc=0.0)
         """
-        return "ODE(t0=%r, tmax=%r, initval=%r, initval_unc=%r)" \
-            % (self.t0, self.tmax, self.initval, self.initval_unc)
+        return "ODE(t0=%r, tmax=%r, initval=%r, initval_unc=%r)" % (
+            self.t0,
+            self.tmax,
+            self.initval,
+            self.initval_unc,
+        )
 
     @abstractmethod
     def modeval(self, t, x):
@@ -96,6 +101,7 @@ class CustomODE(ODE):
         >>> custode = ode.CustomODE(t0=0., tmax=1., modeval=rhs, initval=0.)
         >>> print(custode)
     """
+
     def __init__(self, t0, tmax, modeval, initval, initval_unc=0.0):
         """
         Initialises basic ODE attributes.
@@ -108,7 +114,7 @@ class CustomODE(ODE):
             initval_unc:    uncertainty of initial value,
                             scalar or np.ndarray
         """
-        if isinstance(initval, list) is True:   # hotfix
+        if isinstance(initval, list) is True:  # hotfix
             initval = np.array(initval)
         check_compliance_with_odesolver(modeval, t0, initval)
         self.custom_modeval = modeval
@@ -126,9 +132,11 @@ class CustomODE(ODE):
                       modeval=<function rhs at 0x7f5e4638cf28>,
                       initval=0.0, initval_unc=0.0)
         """
-        return "CustomODE(t0=%r, tmax=%r, modeval=%r, initval=%r,\
-initval_unc=%r)" % (self.t0, self.tmax, self.custom_modeval,
-                    self.initval, self.initval_unc)
+        return (
+            "CustomODE(t0=%r, tmax=%r, modeval=%r, initval=%r,\
+initval_unc=%r)"
+            % (self.t0, self.tmax, self.custom_modeval, self.initval, self.initval_unc)
+        )
 
     def modeval(self, t, x):
         """
@@ -161,8 +169,11 @@ def check_compliance_with_odesolver(modeval, t0, initval):
     try:
         modeval(t0, initval)
     except TypeError:
-        raise TypeError("%r cannot handle (t, x) inputs \
-and is thus incompatible with ODESolver.solve()" % modeval)
+        raise TypeError(
+            "%r cannot handle (t, x) inputs \
+and is thus incompatible with ODESolver.solve()"
+            % modeval
+        )
 
 
 class LinearODE(ODE):
@@ -174,6 +185,7 @@ class LinearODE(ODE):
         >>> linode = ode.LinearODE(t0=0., tmax=1., params=0.24, initval=0.)
         >>> print(linode)
     """
+
     def __init__(self, t0, tmax, params, initval, initval_unc=0.0):
         """
         Initialises basic ODE attributes.
@@ -207,9 +219,11 @@ class LinearODE(ODE):
             LinearODE(t0=0.0, tmax=1.0, params=1.0,
                       initval=2.0, initval_unc=0.0)
         """
-        return "LinearODE(t0=%r, tmax=%r, params=%r, initval=%r,\
-initval_unc=%r)" % (self.t0, self.tmax, self.params,
-                    self.initval, self.initval_unc)
+        return (
+            "LinearODE(t0=%r, tmax=%r, params=%r, initval=%r,\
+initval_unc=%r)"
+            % (self.t0, self.tmax, self.params, self.initval, self.initval_unc)
+        )
 
     def modeval(self, t, x):
         """
@@ -230,7 +244,7 @@ initval_unc=%r)" % (self.t0, self.tmax, self.params,
             >>> linode.modeval(0.1, np.array(0.2, 0.5))
             array([0.048, 0.12 ])
         """
-        return np.dot(x, self.params)       # weird order for vectorised eval.
+        return np.dot(x, self.params)  # weird order for vectorised eval.
 
 
 class MatrixLinearODE(ODE):
@@ -245,6 +259,7 @@ class MatrixLinearODE(ODE):
         >>> matode = ode.MatrixLinearODE(t0=0., tmax=1.,
                                          params=params, initval=initval)
     """
+
     def __init__(self, t0, tmax, params, initval, initval_unc=0.0):
         """
         Initialises basic ODE attributes.
@@ -281,9 +296,11 @@ class MatrixLinearODE(ODE):
                             params=array([[1., 0.], [0., 1.]]),
                             initval=array([0., 0.]), initval_unc=0.0)
         """
-        return "MatrixLinearODE(t0=%r, tmax=%r, params=%r, initval=%r,\
-initval_unc=%r)" % (self.t0, self.tmax, self.params,
-                    self.initval, self.initval_unc)
+        return (
+            "MatrixLinearODE(t0=%r, tmax=%r, params=%r, initval=%r,\
+initval_unc=%r)"
+            % (self.t0, self.tmax, self.params, self.initval, self.initval_unc)
+        )
 
     def modeval(self, t, x):
         """
@@ -304,7 +321,7 @@ initval_unc=%r)" % (self.t0, self.tmax, self.params,
             >>> linode.modeval(0.1, np.array(0.2, 0.5))
             array([0.048, 0.12 ])
         """
-        return np.dot(x, self.params)       # weird order for vectorised eval.
+        return np.dot(x, self.params)  # weird order for vectorised eval.
 
 
 class FitzHughNagumo(ODE):
@@ -322,6 +339,7 @@ class FitzHughNagumo(ODE):
         >>> fhn = ode.FitzHughNagumo(t0=0., tmax=1.,
                                      params=params, initval=initval)
     """
+
     def __init__(self, t0, tmax, params, initval, initval_unc=0.0):
         """
         Initialises basic ODE attributes.
@@ -357,9 +375,11 @@ class FitzHughNagumo(ODE):
             FitzHughNagumo(t0=0.0, tmax=1.0, params=array([1., 2., 3.]),
                            initval=array([1., 1.]), initval_unc=0.0)
         """
-        return "FitzHughNagumo(t0=%r, tmax=%r, params=%r, initval=%r,\
-initval_unc=%r)" % (self.t0, self.tmax, self.params,
-                    self.initval, self.initval_unc)
+        return (
+            "FitzHughNagumo(t0=%r, tmax=%r, params=%r, initval=%r,\
+initval_unc=%r)"
+            % (self.t0, self.tmax, self.params, self.initval, self.initval_unc)
+        )
 
     def modeval(self, t, x):
         """
@@ -386,11 +406,15 @@ initval_unc=%r)" % (self.t0, self.tmax, self.params,
                    [5., -0.66666667],
                    [5., -0.66666667]])
         """
-        if len(x.shape) == 2:       # potentially vectorised evaluation
+        if len(x.shape) == 2:  # potentially vectorised evaluation
             x = x.T
         par0, par1, par2, par3 = self.params
-        return np.array([x[0] - x[0]**3./3. - x[1] + par0,
-                         1./par3 * (x[0] + par1 - par2 * x[1])]).T
+        return np.array(
+            [
+                x[0] - x[0] ** 3.0 / 3.0 - x[1] + par0,
+                1.0 / par3 * (x[0] + par1 - par2 * x[1]),
+            ]
+        ).T
 
 
 class Res2Bod(ODE):
@@ -408,6 +432,7 @@ class Res2Bod(ODE):
     Reference:
         p.129f. in Hairer/Norsett/Wanner book; see module docstring.
     """
+
     def __init__(self, t0, tmax):
         """
         Initialises ODE with t0 and tmax only.
@@ -419,8 +444,7 @@ class Res2Bod(ODE):
             t0:     initial time, scalar.
             tmax:   final time, scalar.
         """
-        initval = np.array([0.994, 0.,
-                            0., -2.00158510637908252240537862224])
+        initval = np.array([0.994, 0.0, 0.0, -2.00158510637908252240537862224])
         initval_unc = np.zeros(initval.shape)
         ODE.__init__(self, t0, tmax, np.array(initval), initval_unc)
         self.params = 0.012277471
@@ -436,9 +460,11 @@ class Res2Bod(ODE):
                     initval=array([0.994, 0., 0., -2.00158511]),
                     initval_unc=array([0., 0., 0., 0.]))
         """
-        return "Res2Bod(t0=%r, tmax=%r, params=%r, initval=%r,\
-initval_unc=%r)" % (self.t0, self.tmax, self.params,
-                    self.initval, self.initval_unc)
+        return (
+            "Res2Bod(t0=%r, tmax=%r, params=%r, initval=%r,\
+initval_unc=%r)"
+            % (self.t0, self.tmax, self.params, self.initval, self.initval_unc)
+        )
 
     def modeval(self, t, x):
         """
@@ -451,7 +477,7 @@ initval_unc=%r)" % (self.t0, self.tmax, self.params,
             array([[1., 1., 2.65279959, -1.35511519],
                    [1., 1., 2.65279959, -1.35511519]])
         """
-        if len(x.shape) == 2:       # potentially vectorised evaluation
+        if len(x.shape) == 2:  # potentially vectorised evaluation
             x = x.T
         coord3 = self.modeval_f1(x)
         coord4 = self.modeval_f2(x)
@@ -463,8 +489,12 @@ initval_unc=%r)" % (self.t0, self.tmax, self.params,
         """
         mu, mup = self.params, 1 - self.params
         const1, const2 = self.get_normalising_const(xarr)
-        return xarr[0] + 2*xarr[3] - mup * (xarr[0] + mu)/const1 \
-            - mu * (xarr[0] - mup)/const2
+        return (
+            xarr[0]
+            + 2 * xarr[3]
+            - mup * (xarr[0] + mu) / const1
+            - mu * (xarr[0] - mup) / const2
+        )
 
     def modeval_f2(self, xarr):
         """
@@ -472,7 +502,7 @@ initval_unc=%r)" % (self.t0, self.tmax, self.params,
         """
         mu, mup = self.params, 1 - self.params
         const1, const2 = self.get_normalising_const(xarr)
-        return xarr[1] - 2*xarr[2] - mup * xarr[1]/const1 - mu * xarr[1]/const2
+        return xarr[1] - 2 * xarr[2] - mup * xarr[1] / const1 - mu * xarr[1] / const2
 
     def get_normalising_const(self, xarr):
         """
@@ -487,13 +517,14 @@ initval_unc=%r)" % (self.t0, self.tmax, self.params,
         Returns normalising constant d1 =((x1 + mu)**2 + x2**2)**3/2
         """
         mu = self.params
-        return ((xarr[0] + mu)**2 + xarr[1]**2)**(1.5)
+        return ((xarr[0] + mu) ** 2 + xarr[1] ** 2) ** (1.5)
 
     def get_d2(self, xarr):
         """
         Returns normalising constant d2 = ((x1 + mu')**2 + x2**2)**3/2
         """
         mup = 1 - self.params
-        return ((xarr[0] - mup)**2 + xarr[1]**2)**(1.5)
+        return ((xarr[0] - mup) ** 2 + xarr[1] ** 2) ** (1.5)
+
 
 # END OF FILE

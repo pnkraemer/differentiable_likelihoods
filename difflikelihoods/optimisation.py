@@ -16,8 +16,6 @@ from difflikelihoods import logdensity
 import numpy as np
 
 
-
-
 def minimise_rs(logpdf, nsamps, initval, lrate):
     """
     Convenience function for first order minimisation.
@@ -25,7 +23,6 @@ def minimise_rs(logpdf, nsamps, initval, lrate):
     logdens = logdensity.LogDensity(logpdf)
     rsmini = RandomSearch(logdens)
     return rsmini.minimise(nsamps, initval, lrate)
-
 
 
 def minimise_gd(logpdf, loggrad, nsamps, initval, lrate):
@@ -37,7 +34,6 @@ def minimise_gd(logpdf, loggrad, nsamps, initval, lrate):
     return gdmini.minimise(nsamps, initval, lrate)
 
 
-
 def minimise_newton(logpdf, loggrad, loghess, nsamps, initval, lrate):
     """
     Convenience function for second order minimisation.
@@ -47,25 +43,14 @@ def minimise_newton(logpdf, loggrad, loghess, nsamps, initval, lrate):
     return newtonmini.minimise(nsamps, initval, lrate)
 
 
-
-
-
-
-
-
-
-
-
-
-
 # Data structure denoting the current iteration: (x, p(x), p'(x), p''(x))
 Iteration = namedtuple("Iteration", "loc objeval gradeval hesseval")
-
 
 
 class Optimiser(ABC):
     """
     """
+
     def __init__(self, logobj):
         """
         logobj behaves like a LogDensity object.
@@ -84,7 +69,6 @@ class Optimiser(ABC):
             curriter = self.iterate(curriter, lrate)
             traj[idx], objectives[idx] = curriter.loc, curriter.objeval
         return traj, objectives
-
 
     def evaluate_logobj(self, loc):
         """
@@ -110,6 +94,7 @@ class Optimiser(ABC):
 class RandomSearch(Optimiser):
     """
     """
+
     def __init__(self, logobj):
         """
         """
@@ -120,18 +105,18 @@ class RandomSearch(Optimiser):
         """
         this_loc, objval = curriter.loc, curriter.objeval
         sample = np.random.randn(len(curriter.loc))
-        newloc = this_loc + lrate * sample/np.linalg.norm(sample)
+        newloc = this_loc + lrate * sample / np.linalg.norm(sample)
         newobjval = self.logobj.eval(newloc)
         if newobjval <= objval:
-            return Iteration(newloc, newobjval, 0., 0.)
+            return Iteration(newloc, newobjval, 0.0, 0.0)
         else:
             return curriter
-
 
 
 class GradientDescent(Optimiser):
     """
     """
+
     def __init__(self, logobj):
         """
         """
@@ -141,13 +126,14 @@ class GradientDescent(Optimiser):
         """
         """
         this_loc, descent = curriter.loc, curriter.gradeval
-        new_iterate = this_loc - lrate*descent
+        new_iterate = this_loc - lrate * descent
         return self.evaluate_logobj(new_iterate)
-    
+
 
 class NewtonMethod(Optimiser):
     """
     """
+
     def __init__(self, logobj):
         """
         """
@@ -158,6 +144,5 @@ class NewtonMethod(Optimiser):
         """
         this_loc, grad, hess = curriter.loc, curriter.gradeval, curriter.hesseval
         descent = np.linalg.solve(hess, grad)
-        new_iterate = this_loc - lrate*descent
+        new_iterate = this_loc - lrate * descent
         return self.evaluate_logobj(new_iterate)
-

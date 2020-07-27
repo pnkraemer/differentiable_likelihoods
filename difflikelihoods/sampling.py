@@ -21,8 +21,6 @@ import numpy as np
 from difflikelihoods import logdensity
 
 
-
-
 def metropolishastings_rw(logpdf, nsamps, initstate, pwidth, ninits):
     """
     Convenience function for Metropolis-Hastings sampling with
@@ -31,7 +29,6 @@ def metropolishastings_rw(logpdf, nsamps, initstate, pwidth, ninits):
     logdens = logdensity.LogDensity(logpdf)
     rwmh = RandomWalkMH(logdens)
     return rwmh.sample_nd(nsamps, initstate, pwidth, ninits)
-
 
 
 def metropolishastings_lang(logpdf, loggrad, nsamps, initstate, pwidth, ninits):
@@ -44,9 +41,9 @@ def metropolishastings_lang(logpdf, loggrad, nsamps, initstate, pwidth, ninits):
     return langmh.sample_nd(nsamps, initstate, pwidth, ninits)
 
 
-
-
-def metropolishastings_plang(logpdf, loggrad, loghess, nsamps, initstate, pwidth, ninits):
+def metropolishastings_plang(
+    logpdf, loggrad, loghess, nsamps, initstate, pwidth, ninits
+):
     """
     Convenience function for Metropolis-Hastings sampling with
     Riemannian (preconditioned) Langevin dynamics proposal kernel.
@@ -56,10 +53,9 @@ def metropolishastings_plang(logpdf, loggrad, loghess, nsamps, initstate, pwidth
     return plangmh.sample_nd(nsamps, initstate, pwidth, ninits)
 
 
-
-
-
-def metropolishastings_ham(logpdf, loggrad, nsamps, initstate, stepsize, nsteps, ninits):
+def metropolishastings_ham(
+    logpdf, loggrad, nsamps, initstate, stepsize, nsteps, ninits
+):
     """
     Convenience function for Hamiltonian MCMC.
     """
@@ -68,10 +64,9 @@ def metropolishastings_ham(logpdf, loggrad, nsamps, initstate, stepsize, nsteps,
     return hmc.sample_nd(nsamps, initstate, stepsize, ninits)
 
 
-
-
-
-def metropolishastings_pham(logpdf, loggrad, loghess, nsamps, initstate, stepsize, nsteps, ninits):
+def metropolishastings_pham(
+    logpdf, loggrad, loghess, nsamps, initstate, stepsize, nsteps, ninits
+):
     """
     Convenience function for preconditioned Hamiltonian MCMC.
     """
@@ -80,11 +75,8 @@ def metropolishastings_pham(logpdf, loggrad, loghess, nsamps, initstate, stepsiz
     return phmc.sample_nd(nsamps, initstate, stepsize, ninits)
 
 
-
-
 # Convenience data structure.
-MCMCState = collections.namedtuple('MCMCState',
-                                   'state logdens loggrad loghess')
+MCMCState = collections.namedtuple("MCMCState", "state logdens loggrad loghess")
 
 
 class MetropolisHastings(ABC):
@@ -92,6 +84,7 @@ class MetropolisHastings(ABC):
     Abstract Metropolis-Hastings class. Contains everything but the
     proposal kernels.
     """
+
     def __init__(self, logdens):
         """
         Initialise MH sampler with a log-density function.
@@ -102,13 +95,13 @@ class MetropolisHastings(ABC):
         """
         self.logdens = logdens
 
-
     def sample_nd(self, nsamps, init_state, pwidth, ninits=None, *optional):
         """
         """
-        assert init_state_is_array(init_state), \
-            "Please enter a (d,) dimensional initial state"
-        states, logprobs = np.zeros((nsamps, len(init_state))), np.zeros(nsamps) 
+        assert init_state_is_array(
+            init_state
+        ), "Please enter a (d,) dimensional initial state"
+        states, logprobs = np.zeros((nsamps, len(init_state))), np.zeros(nsamps)
         accepted = 0
         if ninits is None:
             ninits = 0
@@ -118,14 +111,18 @@ class MetropolisHastings(ABC):
             if idx < ninits:
                 proposal, corrfact = self.generate_proposal(currstate, pwidth)
             else:
-                proposal, corrfact = self.generate_proposal(currstate, 0.2*pwidth)
-            currstate, is_accept = self.accept_or_reject(currstate, proposal, corrfact, idx, ninits)
-            states[idx], logprobs[idx] = currstate.state.copy(), currstate.logdens.copy()
+                proposal, corrfact = self.generate_proposal(currstate, 0.2 * pwidth)
+            currstate, is_accept = self.accept_or_reject(
+                currstate, proposal, corrfact, idx, ninits
+            )
+            states[idx], logprobs[idx] = (
+                currstate.state.copy(),
+                currstate.logdens.copy(),
+            )
             if idx >= ninits:
                 accepted = accepted + int(is_accept)
-        ratio = accepted/nsamps
+        ratio = accepted / nsamps
         return states, logprobs, ratio
-
 
     def evaluate_logdens(self, loc):
         """
@@ -139,9 +136,9 @@ class MetropolisHastings(ABC):
             hesseval = self.logdens.hesseval(loc)
         else:
             hesseval = 0
-        return MCMCState(state=loc, logdens=logdenseval,
-                         loggrad=gradeval, loghess=hesseval)
-
+        return MCMCState(
+            state=loc, logdens=logdenseval, loggrad=gradeval, loghess=hesseval
+        )
 
     def accept_or_reject(self, currstate, proposal, corrfact, idx, ninits):
         """
@@ -155,7 +152,6 @@ class MetropolisHastings(ABC):
             is_accept = False
         return state, is_accept
 
-
     def get_logaccprob(self, currstate, proposal, corrfact, idx, ninits):
         """
         Returns NEGATIVE log acceptance probability, i.e.
@@ -165,7 +161,6 @@ class MetropolisHastings(ABC):
             corrfact = -corrfact
         return (corrfact) + (proposal.logdens - currstate.logdens)
 
-
     @abstractmethod
     def generate_proposal(self, *args):
         """
@@ -173,28 +168,24 @@ class MetropolisHastings(ABC):
         pass
 
 
-
 def init_state_is_array(init_state):
     """
     Checks whether init_state is compliant with an Nd algorithm.
     That is, whether init_state is an (d,) np.ndarray.
     """
-    assert(isinstance(init_state, np.ndarray)), \
-        "Please enter init_state of shape (d,)"
-    assert(len(init_state.shape) == 1), \
-        "Please enter init_state of shape (d,)"
+    assert isinstance(init_state, np.ndarray), "Please enter init_state of shape (d,)"
+    assert len(init_state.shape) == 1, "Please enter init_state of shape (d,)"
     return True
-
 
 
 class RandomWalkMH(MetropolisHastings):
     """
     """
+
     def __init__(self, logdens):
         """
         """
         MetropolisHastings.__init__(self, logdens)
-
 
     def generate_proposal(self, currstate, pwidth):
         """
@@ -204,23 +195,20 @@ class RandomWalkMH(MetropolisHastings):
         corrfact = 0
         return proposal, corrfact
 
-
     def sample_randomwalk(self, mean, var):
         """
         """
         return mean + np.sqrt(var) * np.random.randn(len(mean))
 
 
-
-
 class LangevinMH(MetropolisHastings):
     """
     """
+
     def __init__(self, logdens):
         """
         """
         MetropolisHastings.__init__(self, logdens)
-
 
     def generate_proposal(self, currstate, pwidth):
         """
@@ -230,13 +218,13 @@ class LangevinMH(MetropolisHastings):
         corrfact = self.compute_corrfact_langevin(currstate, proposal, pwidth)
         return proposal, corrfact
 
-
     def sample_langevin(self, currstate, pwidth):
         """
         """
         noise = np.random.randn(len(currstate.state))
-        return currstate.state - pwidth*currstate.loggrad + np.sqrt(2*pwidth)*noise
-
+        return (
+            currstate.state - pwidth * currstate.loggrad + np.sqrt(2 * pwidth) * noise
+        )
 
     def compute_corrfact_langevin(self, currstate, proposal, pwidth):
         """
@@ -245,26 +233,24 @@ class LangevinMH(MetropolisHastings):
         logdenom = self.kernel_langevin(proposal, currstate, pwidth)
         return lognomin - logdenom
 
-
     def kernel_langevin(self, state1, state2, pwidth):
         """
         """
-        state2_dyn = state2.state - pwidth*state2.loggrad
-        dist = np.linalg.norm(state1.state - state2_dyn)**2
-        return 0.5*dist/(2*pwidth)
-
+        state2_dyn = state2.state - pwidth * state2.loggrad
+        dist = np.linalg.norm(state1.state - state2_dyn) ** 2
+        return 0.5 * dist / (2 * pwidth)
 
 
 class PrecondLangevinMH(MetropolisHastings):
     """
     Preconditioning with (inverse) Hessian.
     """
+
     def __init__(self, logdens):
         """
         precondeval returns M (and not M^{-1}) as used in Cald&Gir
         """
         MetropolisHastings.__init__(self, logdens)
-
 
     def generate_proposal(self, currstate, pwidth):
         """
@@ -274,14 +260,14 @@ class PrecondLangevinMH(MetropolisHastings):
         corrfact = self.compute_corrfact_langevin(currstate, proposal, pwidth)
         return proposal, corrfact
 
-
     def sample_langevin(self, currstate, pwidth):
         """
         """
-        noise = np.random.multivariate_normal(np.zeros(len(currstate.loghess)), np.linalg.inv(currstate.loghess))
+        noise = np.random.multivariate_normal(
+            np.zeros(len(currstate.loghess)), np.linalg.inv(currstate.loghess)
+        )
         prec_dyn = np.linalg.solve(currstate.loghess, currstate.loggrad)
-        return currstate.state - pwidth*prec_dyn + np.sqrt(2*pwidth)*noise
-
+        return currstate.state - pwidth * prec_dyn + np.sqrt(2 * pwidth) * noise
 
     def compute_corrfact_langevin(self, currstate, proposal, pwidth):
         """
@@ -290,27 +276,24 @@ class PrecondLangevinMH(MetropolisHastings):
         logdenom = self.kernel_langevin(proposal, currstate, pwidth)
         return lognomin - logdenom
 
-
     def kernel_langevin(self, state1, state2, pwidth):
         """
         """
         prec_dyn = np.linalg.solve(state2.loghess, state2.loggrad)
-        state2_dyn = state2.state - pwidth*prec_dyn
+        state2_dyn = state2.state - pwidth * prec_dyn
         difference = state1.state - state2_dyn
-        return 0.5 * difference.dot(np.dot(state2.loghess, difference))/(2*pwidth)
-
-
+        return 0.5 * difference.dot(np.dot(state2.loghess, difference)) / (2 * pwidth)
 
 
 class HamiltonianMC(MetropolisHastings):
     """
     """
+
     def __init__(self, logdens, nsteps):
         """
         """
         MetropolisHastings.__init__(self, logdens)
         self.nsteps = nsteps
-
 
     def generate_proposal(self, currstate, pwidth):
         """
@@ -318,14 +301,14 @@ class HamiltonianMC(MetropolisHastings):
 
         The correction factor is the quotient of the hamiltonian terms.
         """
-        momentum = np.random.multivariate_normal(np.zeros(len(currstate.state)),
-                                                 np.eye(len(currstate.state)))
+        momentum = np.random.multivariate_normal(
+            np.zeros(len(currstate.state)), np.eye(len(currstate.state))
+        )
         # hamilt = self.evaluate_hamiltonian(momentum, currstate)
         momentum_new, proposal = self.leapfrog_dynamics(momentum, currstate, pwidth)
         # prop_hamilt = self.evaluate_hamiltonian(momentum_new, proposal)
         corrfact = self.get_corrfact(momentum, momentum_new)
         return proposal, corrfact
-
 
     def leapfrog_dynamics(self, momentum, currstate, pwidth):
         """
@@ -335,24 +318,19 @@ class HamiltonianMC(MetropolisHastings):
             momentum, proposal = self.compute_next_lfstep(momentum, proposal, pwidth)
         return momentum, proposal
 
-
     def compute_next_lfstep(self, momentum, proposal, pwidth):
         """
         """
-        momentum = momentum - 0.5*pwidth*proposal.loggrad
+        momentum = momentum - 0.5 * pwidth * proposal.loggrad
         pstate = proposal.state + pwidth * momentum
         proposal = self.evaluate_logdens(pstate)
-        momentum = momentum - 0.5*pwidth*proposal.loggrad
+        momentum = momentum - 0.5 * pwidth * proposal.loggrad
         return momentum, proposal
 
     def get_corrfact(self, mom_new, mom):
         """
         """
-        return 0.5*(mom_new.T @ mom_new - mom.T @ mom)
-
-
-
-
+        return 0.5 * (mom_new.T @ mom_new - mom.T @ mom)
 
 
 class PrecondHamiltonianMC(MetropolisHastings):
@@ -362,6 +340,7 @@ class PrecondHamiltonianMC(MetropolisHastings):
         * Euclidean-Gaussian HMC: if the preconditioner is constant
     [Girolami and Calderhead, 2011; Betancourt, 2018]
     """
+
     def __init__(self, logdens, nsteps):
         """
         evalprecond returns M (and not M^{-1}) as used in Cald&Gir.
@@ -370,19 +349,18 @@ class PrecondHamiltonianMC(MetropolisHastings):
         MetropolisHastings.__init__(self, logdens)
         self.nsteps = nsteps
 
-
     def generate_proposal(self, currstate, pwidth):
         """
         pwidth is used as stepsize for self.nsteps leapfrog steps.
 
         The correction factor is the quotient of the hamiltonian terms.
         """
-        momentum = np.random.multivariate_normal(np.zeros(len(currstate.state)),
-                                                 currstate.loghess)
+        momentum = np.random.multivariate_normal(
+            np.zeros(len(currstate.state)), currstate.loghess
+        )
         momentum_new, proposal = self.leapfrog_dynamics(momentum, currstate, pwidth)
         corrfact = self.get_corrfact(momentum, momentum_new, currstate, proposal)
         return proposal, corrfact
-
 
     def leapfrog_dynamics(self, momentum, currstate, pwidth):
         """
@@ -392,23 +370,21 @@ class PrecondHamiltonianMC(MetropolisHastings):
             momentum, proposal = self.compute_next_lfstep(momentum, proposal, pwidth)
         return momentum, proposal
 
-
     def compute_next_lfstep(self, momentum, proposal, pwidth):
         """
         """
-        momentum = momentum - 0.5*pwidth*proposal.loggrad
+        momentum = momentum - 0.5 * pwidth * proposal.loggrad
         pstate = proposal.state + pwidth * np.linalg.solve(proposal.loghess, momentum)
         proposal = self.evaluate_logdens(pstate)
-        momentum = momentum - 0.5*pwidth*proposal.loggrad
+        momentum = momentum - 0.5 * pwidth * proposal.loggrad
         return momentum, proposal
-
 
     def get_corrfact(self, mom, mom_new, currstate, proposal):
         """
         """
-        return 0.5*(mom_new.T @  np.linalg.solve(proposal.loghess, mom_new)\
-            + np.log(np.linalg.det(proposal.loghess))\
-            - mom.T @  np.linalg.solve(currstate.loghess, mom)
-            - np.log(np.linalg.det(currstate.loghess)))
-
-
+        return 0.5 * (
+            mom_new.T @ np.linalg.solve(proposal.loghess, mom_new)
+            + np.log(np.linalg.det(proposal.loghess))
+            - mom.T @ np.linalg.solve(currstate.loghess, mom)
+            - np.log(np.linalg.det(currstate.loghess))
+        )

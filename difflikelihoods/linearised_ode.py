@@ -57,9 +57,11 @@ class LinearisedODE(ode.ODE, ABC):
             LinearisedODE(t0=0.0, tmax=1.0, params=1.0,
                           initval=2.0, initval_unc=0.0)
         """
-        return "LinearisedODE(t0=%r, tmax=%r, params=%r, initval=%r, \
-initval_unc=%r)" % (self.t0, self.tmax, self.params,
-                    self.initval, self.initval_unc)
+        return (
+            "LinearisedODE(t0=%r, tmax=%r, params=%r, initval=%r, \
+initval_unc=%r)"
+            % (self.t0, self.tmax, self.params, self.initval, self.initval_unc)
+        )
 
     def modeval(self, t, x):
         """
@@ -77,7 +79,6 @@ initval_unc=%r)" % (self.t0, self.tmax, self.params,
         """
         return np.dot(rhs_parts.T, self.params).T
 
-
     @abstractmethod
     def modeval_parts(self, t, x):
         """
@@ -94,6 +95,7 @@ class LinearODE(LinearisedODE):
     in the LinearisedODE formulation.
     Interface intentionally similar to the one of ode.LinearODE.
     """
+
     def __init__(self, t0, tmax, params, initval, initval_unc=0.0):
         """
         Initialises LinearODE object.
@@ -114,8 +116,7 @@ class LinearODE(LinearisedODE):
         if np.isscalar(initval) is False:
             raise TypeError("Please enter a scalar initial value")
         params_array = params * np.ones(1)
-        LinearisedODE.__init__(self, t0, tmax, params_array,
-                               initval, initval_unc)
+        LinearisedODE.__init__(self, t0, tmax, params_array, initval, initval_unc)
         self.params = params
 
     def __repr__(self):
@@ -124,9 +125,11 @@ class LinearODE(LinearisedODE):
             LinearODE(t0=0.0, tmax=1.0, params=1.0,
                       initval=2.0, initval_unc=0.0)
         """
-        return "LinearODE(t0=%r, tmax=%r, params=%r, initval=%r, \
-initval_unc=%r) in linearised form" \
+        return (
+            "LinearODE(t0=%r, tmax=%r, params=%r, initval=%r, \
+initval_unc=%r) in linearised form"
             % (self.t0, self.tmax, self.params, self.initval, self.initval_unc)
+        )
 
     def modeval_parts(self, t, x):
         """
@@ -140,6 +143,7 @@ class LogisticODE(LinearisedODE):
     Sigmoid logistig growth function,
         x'(t) = r * (x(t) * (1 - x(t)/k))
     """
+
     def __init__(self, t0, tmax, params, initval, initval_unc=0.0):
         """
         Initialises basic ODE attributes.
@@ -161,16 +165,18 @@ class LogisticODE(LinearisedODE):
             raise TypeError("Please parameters strictly greater than zero.")
         self.params = params
         LinearisedODE.__init__(self, t0, tmax, self.params, initval, initval_unc)
-        
+
     def __repr__(self):
         """
         Represent ODE object and its parameters.
             SigmoidLogGrowth(t0=0.0, tmax=1.0, params=array([1., 2.]),
                              initval=2.0, initval_unc=0.0)
         """
-        return "SigmoidLogGrowth(t0=%r, tmax=%r, params=%r, initval=%r, \
-initval_unc=%r) in linearised form" % (self.t0, self.tmax, self.params,
-                                       self.initval, self.initval_unc)
+        return (
+            "SigmoidLogGrowth(t0=%r, tmax=%r, params=%r, initval=%r, \
+initval_unc=%r) in linearised form"
+            % (self.t0, self.tmax, self.params, self.initval, self.initval_unc)
+        )
 
     def modeval_parts(self, t, x):
         """
@@ -195,7 +201,7 @@ initval_unc=%r) in linearised form" % (self.t0, self.tmax, self.params,
         """
         Returns f_2(x) = -x**2.
         """
-        return -x**2
+        return -(x ** 2)
 
 
 class LotkaVolterra(LinearisedODE):
@@ -213,6 +219,7 @@ class LotkaVolterra(LinearisedODE):
     Reference:
         https://en.wikipedia.org/wiki/Lotka%E2%80%93Volterra_equations
     """
+
     def __init__(self, t0, tmax, params, initval, initval_unc=0.0):
         if len(params) != 4:
             raise TypeError("Please enter 4 parameters [p_1, p_2, p_3, p_4]")
@@ -226,9 +233,11 @@ class LotkaVolterra(LinearisedODE):
             LotkaVolterra(t0=0.0, tmax=1.0, params=[1.2, 2.1, 3.4, 4.3],
                           initval=[1.0, 2.0], initval_unc=0.0)
         """
-        return "LotkaVolterra(t0=%r, tmax=%r, params=%r, initval=%r, \
-initval_unc=%r) in linearised form" % (self.t0, self.tmax, self.params,
-                                       self.initval, self.initval_unc)
+        return (
+            "LotkaVolterra(t0=%r, tmax=%r, params=%r, initval=%r, \
+initval_unc=%r) in linearised form"
+            % (self.t0, self.tmax, self.params, self.initval, self.initval_unc)
+        )
 
     def modeval_parts(self, t, x):
         """
@@ -273,6 +282,7 @@ initval_unc=%r) in linearised form" % (self.t0, self.tmax, self.params,
         out[1] = -x[1]
         return out
 
+
 class FitzHughNagumoPsi3(LinearisedODE):
     """
     FitzHugh-Nagumo model ODE. A 2d system of ODEs,
@@ -287,15 +297,16 @@ class FitzHughNagumoPsi3(LinearisedODE):
         >>> initval = np.array([1., 1.])
     Nota bene: We assume the parameter c = Psi to be fixed at 3.
     """
+
     def __init__(self, t0, tmax, params, initval, initval_unc=0.0):
         if len(params) != 2:
             raise TypeError("Please enter 1 parameters [a, b]")
         if len(initval) != 2:
             raise TypeError("Please enter a 2d initial value")
         LinearisedODE.__init__(self, t0, tmax, params, initval, initval_unc)
-        self.params = [1.] + params  # nb: the first parameter always has to be 1. 
+        self.params = [1.0] + params  # nb: the first parameter always has to be 1.
 
-    def modeval_parts(self, t, x): 
+    def modeval_parts(self, t, x):
         """
         """
         f_1 = self.modeval_part_1(t, x)
@@ -309,8 +320,8 @@ class FitzHughNagumoPsi3(LinearisedODE):
         out = np.zeros(x.shape)
         x_1, x_2 = x
         # out[0] = 3*x_1 - x_1**3 - 3*x_2   # this was the previous line
-        out[0] = x_1 - x_1**3 / 3. - x_2
-        out[1] = x_1 / 3.
+        out[0] = x_1 - x_1 ** 3 / 3.0 - x_2
+        out[1] = x_1 / 3.0
         return out
 
     def modeval_part_2(self, t, x):
@@ -318,8 +329,8 @@ class FitzHughNagumoPsi3(LinearisedODE):
         """
         out = np.zeros(x.shape)
         x_1, x_2 = x
-        out[0] = 0.
-        out[1] = 1./3. 
+        out[0] = 0.0
+        out[1] = 1.0 / 3.0
         return out
 
     def modeval_part_3(self, t, x):
@@ -327,13 +338,15 @@ class FitzHughNagumoPsi3(LinearisedODE):
         """
         out = np.zeros(x.shape)
         x_1, x_2 = x
-        out[0] = 0.
-        out[1] = - x_2 / 3. 
+        out[0] = 0.0
+        out[1] = -x_2 / 3.0
         return out
+
 
 class SignalTransduction(LinearisedODE):
     """
     """
+
     def __init__(self, t0, tmax, params, initval, initval_unc=0.0):
         if len(params) != 5:
             raise TypeError("Please enter 5 parameters [k_1, ..., k_4, v]")
@@ -365,9 +378,9 @@ class SignalTransduction(LinearisedODE):
         """
         out = np.zeros(x.shape)
         x_1, x_2, x_3, x_4, x_5 = x
-        out[0] = -x_1*x_3
-        out[2] = -x_1*x_3
-        out[3] = x_1*x_3
+        out[0] = -x_1 * x_3
+        out[2] = -x_1 * x_3
+        out[3] = x_1 * x_3
         return out
 
     def modeval_part_3(self, t, x):
@@ -398,9 +411,11 @@ class SignalTransduction(LinearisedODE):
         out[4] = -x_5
         return out
 
+
 class GUiY(LinearisedODE):
     """
     """
+
     def __init__(self, t0, tmax, params, initval, initval_unc=0.0):
         if len(params) != 10:
             raise TypeError("Please enter 5 parameters [k_1, ..., k_4, v]")
@@ -428,9 +443,9 @@ class GUiY(LinearisedODE):
         """
         out = np.zeros(x.shape)
         # x_1, x_2, x_3, x_4, x_5, x_6, x_7, x_8, x_9, x_10 = x  # maybe we will need this if x[0],... doesn't work
-        out[0] = -x[7]*x[0]
-        out[5] = x[7]*x[0]
-        out[7] = -x[7]*x[0]
+        out[0] = -x[7] * x[0]
+        out[5] = x[7] * x[0]
+        out[7] = -x[7] * x[0]
         return out
 
     def modeval_part_2(self, t, x):
@@ -448,9 +463,9 @@ class GUiY(LinearisedODE):
         """
         out = np.zeros(x.shape)
         # x_1, x_2, x_3, x_4, x_5, x_6, x_7, x_8, x_9, x_10 = x  # maybe we will need this if x[0],... doesn't work
-        out[1] = -x[8]*x[1]
-        out[6] = x[8]*x[1]
-        out[8] = -x[8]*x[1]
+        out[1] = -x[8] * x[1]
+        out[6] = x[8] * x[1]
+        out[8] = -x[8] * x[1]
         return out
 
     def modeval_part_4(self, t, x):
@@ -468,9 +483,9 @@ class GUiY(LinearisedODE):
         """
         out = np.zeros(x.shape)
         # x_1, x_2, x_3, x_4, x_5, x_6, x_7, x_8, x_9, x_10 = x  # maybe we will need this if x[0],... doesn't work
-        out[3] = x[6]*x[4]
-        out[4] = -x[6]*x[4]
-        out[6] = -x[6]*x[4]
+        out[3] = x[6] * x[4]
+        out[4] = -x[6] * x[4]
+        out[6] = -x[6] * x[4]
         return out
 
     def modeval_part_6(self, t, x):
@@ -488,9 +503,9 @@ class GUiY(LinearisedODE):
         """
         out = np.zeros(x.shape)
         # x_1, x_2, x_3, x_4, x_5, x_6, x_7, x_8, x_9, x_10 = x  # maybe we will need this if x[0],... doesn't work
-        out[2] = x[8]*x[4]
-        out[4] = -x[8]*x[4]
-        out[8] = -x[8]*x[4]
+        out[2] = x[8] * x[4]
+        out[4] = -x[8] * x[4]
+        out[8] = -x[8] * x[4]
         return out
 
     def modeval_part_8(self, t, x):
@@ -508,8 +523,8 @@ class GUiY(LinearisedODE):
         """
         out = np.zeros(x.shape)
         # x_1, x_2, x_3, x_4, x_5, x_6, x_7, x_8, x_9, x_10 = x  # maybe we will need this if x[0],... doesn't work
-        out[5] = x[8]-x[7]
-        out[6] = x[8]-x[7]
+        out[5] = x[8] - x[7]
+        out[6] = x[8] - x[7]
         return out
 
     def modeval_part_10(self, t, x):
@@ -517,6 +532,6 @@ class GUiY(LinearisedODE):
         """
         out = np.zeros(x.shape)
         # x_1, x_2, x_3, x_4, x_5, x_6, x_7, x_8, x_9, x_10 = x  # maybe we will need this if x[0],... doesn't work
-        out[7] = x[8]-x[7]
-        out[8] = x[7]-x[8]
+        out[7] = x[8] - x[7]
+        out[8] = x[7] - x[8]
         return out

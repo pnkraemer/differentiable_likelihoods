@@ -33,6 +33,7 @@ class LinearisedODESolver(odesolver.ODESolver):
     Creates:
         LinearisedODESolver.allocate_rhsvals
     """
+
     def solve(self, ode, stepsize):
         """
         Solves given ODE with given stepsize.
@@ -48,15 +49,17 @@ class LinearisedODESolver(odesolver.ODESolver):
                         shape (ntsteps, nparams, ndim),
             uncerts:    shape (ntsteps, ndim); for now, equal to zero.
         """
-        assert(self.ode_matches_ssm(ode) is True)
-        if hasattr(ode, 'is_linearised') is False or ode.is_linearised is False:
+        assert self.ode_matches_ssm(ode) is True
+        if hasattr(ode, "is_linearised") is False or ode.is_linearised is False:
             raise AttributeError("Please enter an InvProblemODE instance")
         self.discretise_statespacemodel(stepsize)
         tsteps, means, covars = self.make_arrays(ode, stepsize)
         all_rhs_parts, uncertvals = self.allocate_all_rhs_parts(ode, stepsize)
         meanpred, covarpred = self.initialise(ode)
         for i, time in enumerate(tsteps):
-            data, rhs_parts, uncert = self.evaluate_model(ode, meanpred, covarpred, time)
+            data, rhs_parts, uncert = self.evaluate_model(
+                ode, meanpred, covarpred, time
+            )
             all_rhs_parts[i], uncertvals[i] = rhs_parts, uncert
             means[i], covars[i] = self.filt.update(meanpred, covarpred, data, uncert)
             meanpred, covarpred = self.filt.predict(means[i], covars[i])
@@ -116,4 +119,3 @@ class LinearisedODESolver(odesolver.ODESolver):
         rhs_parts = ode.modeval_parts(time, reduced_mean)
         uncert = 0 * data
         return data, rhs_parts, uncert
-

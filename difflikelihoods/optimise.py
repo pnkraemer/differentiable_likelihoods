@@ -24,6 +24,7 @@ Example in 2d:
 import numpy as np
 import scipy.optimize as sco
 
+
 def minimise(fun, jac, x0, acc=1e-06):
     """
     Minimises a function fun: R^d -> R, d >=1, with CG algorithm.
@@ -39,9 +40,10 @@ def minimise(fun, jac, x0, acc=1e-06):
         xmin:   approximation of minimimum
         numit:  number of iterations (function evaluations)
     """
-    output = sco.minimize(fun, x0, method='CG', jac=jac, tol=acc)
-    xmin = output['x']
-    numit = output['nfev']
+    output = sco.minimize(fun, x0, method="CG", jac=jac, tol=acc)
+    xmin = output["x"]
+    numit = output["nfev"]
     return xmin, numit
+
 
 # END OF FILE

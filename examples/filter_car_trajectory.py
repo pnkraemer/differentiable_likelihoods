@@ -22,10 +22,12 @@ def init_ssm(twidth):
     A = np.eye(4) + np.diag(twidth * np.ones(2), 2)
     Q = _get_tcovar(twidth)
     H = np.eye(2, 4)
-    R = np.diag(np.array([0.01**2, 0.01**2]))
+    R = np.diag(np.array([0.01 ** 2, 0.01 ** 2]))
     m0 = np.zeros(4)
     c0 = 0.0001 * np.eye(4)
-    ssm = stsp.InvariantSSM(transmat=A, transcovar=Q, measmat=H, meascovar=R, init_mean=m0, init_covar=c0)
+    ssm = stsp.InvariantSSM(
+        transmat=A, transcovar=Q, measmat=H, meascovar=R, init_mean=m0, init_covar=c0
+    )
     return ssm
 
 
@@ -33,10 +35,9 @@ def _get_tcovar(twidth):
     """
     Auxiliary function which returns the transition covariance matrix of car model
     """
-    diagonal = np.array([twidth**3/3., twidth**3/3., twidth, twidth])
-    offdiagonal = np.array([twidth**2/2., twidth**2/2.])
-    tcovar = np.diag(diagonal) + np.diag(offdiagonal, 2) +\
-        np.diag(offdiagonal, -2)
+    diagonal = np.array([twidth ** 3 / 3.0, twidth ** 3 / 3.0, twidth, twidth])
+    offdiagonal = np.array([twidth ** 2 / 2.0, twidth ** 2 / 2.0])
+    tcovar = np.diag(diagonal) + np.diag(offdiagonal, 2) + np.diag(offdiagonal, -2)
     return tcovar
 
 
@@ -54,10 +55,10 @@ means, covars = kfilt.filter(dataset)
 
 # Visualise results
 plt.title("Tracking the movement of a car")
-plt.plot(dataset[:,0], dataset[:,1], '.', alpha=0.5, label="Dataset")
-plt.plot(means[:,0], means[:,1], '-', linewidth=2, label="Filtered Trajectory")
-plt.plot(means[0,0], means[0,1], 'o', label="Starting point at t=t0")
-plt.plot(means[-1,0], means[-1,1], '^', label="Endpoint at t=tmax")
+plt.plot(dataset[:, 0], dataset[:, 1], ".", alpha=0.5, label="Dataset")
+plt.plot(means[:, 0], means[:, 1], "-", linewidth=2, label="Filtered Trajectory")
+plt.plot(means[0, 0], means[0, 1], "o", label="Starting point at t=t0")
+plt.plot(means[-1, 0], means[-1, 1], "^", label="Endpoint at t=tmax")
 plt.legend()
 plt.show()
 
