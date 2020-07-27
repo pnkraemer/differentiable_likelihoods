@@ -8,7 +8,7 @@ and some related methods.
 
 
 <p align="center">
-<img src="./experiments/figures/figure1_firstpage.pdf" height="200px"><img src="./experiments/figures/figure2_contours.pdf" height="200px">
+<img src="./_figures/figure1_firstpage.svg" height="200px"><img src="./_figures/figure2_contours.svg" height="200px">
 </p>
 
 
