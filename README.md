@@ -2,7 +2,7 @@
 
 This repository contains the python code that was used for the paper
 
-Kersting, H., Kr\"amer, N., Schiegg, M., Daniel, C., Tiemann,M., and Hennig, P.   Differentiable likelihoods for fast inversion of ‘likelihood-free’ dynamical systems. In Proceedings of the 37th International Conference on Machine Learning, Vienna, Austria, PMLR 119, 2020.
+Kersting, H., Krämer, N., Schiegg, M., Daniel, C., Tiemann,M., and Hennig, P.   Differentiable likelihoods for fast inversion of ‘likelihood-free’ dynamical systems. In Proceedings of the 37th International Conference on Machine Learning, Vienna, Austria, PMLR 119, 2020.
 
 and some related methods.
 
@@ -10,6 +10,10 @@ and some related methods.
 ## Contents
 
 Linear state space models, Kalman filter, probabilistic solvers for ODEs including different methods for generating measurements (see Kersting and Hennig, 2016), Markov Chain Monte Carlo simulation, Bayesian quadrature, Gaussian process regression, Clenshaw-Curtis quadrature and more.
+
+![](./figures/figure1_firstpage.png)
+
+
 <p align="center">
 <img src="figures/hfn_unc.png" width="250px"><img src="figures/car_movement.png" width="250px"><img src="figures/res2bod.png" width="250px">
 </p>
