@@ -13,7 +13,7 @@ Linear state space models, Kalman filter, probabilistic solvers for ODEs includi
 
 
 <p align="center">
-<img src="./experiments/figures/figure1_firstpage.png" height="250px"><img src="./experiments/figures/figure2_contours.png" height="250px">
+<img src="./experiments/figures/figure1_firstpage.png" height="200px"><img src="./experiments/figures/figure2_contours.png" height="200px">
 </p>
 
 ## Installation
@@ -45,7 +45,7 @@ The experiments from the paper are in the ```experiments``` folder and sorted vi
 
 ## Cite as
 
-Wherever relevant, please cite this work as
+Please cite this work as
 ```
 @article{kersting2020differentiable,
   title={Differentiable Likelihoods for Fast Inversion of'Likelihood-Free'Dynamical Systems},

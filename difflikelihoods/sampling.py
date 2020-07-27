@@ -18,7 +18,7 @@ NOTE:
 import collections
 from abc import ABC, abstractmethod
 import numpy as np
-from odefilters import logdensity
+from difflikelihoods import logdensity
 
 
 

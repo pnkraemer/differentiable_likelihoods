@@ -10,8 +10,8 @@ Example 4.3 in https://users.aalto.fi/~ssarkka/pub/cup_book_online_20131111.pdf
 """
 import numpy as np
 import matplotlib.pyplot as plt
-from odefilters import statespace as stsp
-from odefilters import filters
+from difflikelihoods import statespace as stsp
+from difflikelihoods import filters
 
 
 def init_ssm(twidth):

@@ -13,9 +13,9 @@ is visible, the test passes.
 """
 
 import numpy as np
-from odefilters import linearised_ode as linode
-from odefilters import odesolver 
-from odefilters import statespace
+from difflikelihoods import linearised_ode as linode
+from difflikelihoods import odesolver 
+from difflikelihoods import statespace
 import matplotlib.pyplot as plt
 
 # Solve ODE
