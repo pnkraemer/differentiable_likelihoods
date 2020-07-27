@@ -1,33 +1,35 @@
-# Differentiable likelihoods for fast inversion of 'Likelihood-free' dynamical systems
+# Differentiable Likelihoods for Fast Inversion of 'Likelihood-free' Dynamical Systems
 
 This repository contains the python code that was used for the paper
 
-Kersting, H., Krämer, N., Schiegg, M., Daniel, C., Tiemann,M., and Hennig, P.   Differentiable likelihoods for fast inversion of ‘likelihood-free’ dynamical systems. In Proceedings of the 37th International Conference on Machine Learning, Vienna, Austria, PMLR 119, 2020.
+**Kersting, H., Krämer, N., Schiegg, M., Daniel, C., Tiemann, M., and Hennig, P.   Differentiable likelihoods for fast inversion of ‘likelihood-free’ dynamical systems. In: Proceedings of the 37th International Conference on Machine Learning, Vienna, Austria, PMLR 119, 2020.**
 
 and some related methods.
 
 
+<p align="center">
+<img src="./experiments/figures/figure1_firstpage.pdf" height="200px"><img src="./experiments/figures/figure2_contours.pdf" height="200px">
+</p>
+
+
 ## Contents
 
-Linear state space models, Kalman filter, probabilistic solvers for ODEs including different methods for generating measurements (see Kersting and Hennig, 2016), Markov Chain Monte Carlo simulation, Bayesian quadrature, Gaussian process regression, Clenshaw-Curtis quadrature and more.
+Linear state space models, Kalman filter, probabilistic solvers for ODEs,  Markov Chain Monte Carlo simulation and more.
+The focus is on those methods that were introduced/used in the aforementioned paper.
 
-
-<p align="center">
-<img src="./experiments/figures/figure1_firstpage.png" height="200px"><img src="./experiments/figures/figure2_contours.png" height="200px">
-</p>
 
 ## Installation
 In the root directory, run
 ```
 pip install .
 ```
-which allows avoiding the `sys.path.append` malarkey.
 
 ## Requirements
 
-numpy, scipy, matplotlib
+numpy, scipy, matplotlib, dataclasses
 
 ## Example
+Below is a code snippet that applies a probabilistic ODE solver to an initial value problem based on a linear ODE.
 ```python
 from difflikelihoods import statespace
 from difflikelihoods import odesolver
@@ -41,14 +43,15 @@ More examples are contained in the ```examples``` directory.
 
 ## Experiments
 
-The experiments from the paper are in the ```experiments``` folder and sorted via `FigureN.ipynb`. 
+The experiments from the paper are in the ```experiments``` folder and sorted as `FigureN.ipynb`. For example, the notebook for Figure 3 can be found in `./experiments/Figure3.ipynb`.
+If you want to apply this algorithm to your own problems, those notebooks might be good starting points/tutorials.
 
 ## Cite as
 
 Please cite this work as
 ```
 @article{kersting2020differentiable,
-  title={Differentiable Likelihoods for Fast Inversion of'Likelihood-Free'Dynamical Systems},
+  title={Differentiable Likelihoods for Fast Inversion of 'Likelihood-Free' Dynamical Systems},
   author={Kersting, Hans and Kr{\"a}mer, Nicholas and Schiegg, Martin and Daniel, Christian and Tiemann, Michael and Hennig, Philipp},
   journal={Proceedings of the 37th International Conference on Machine Learning, Vienna, Austria, PMLR 119},
   year={2020}

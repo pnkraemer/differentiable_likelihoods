@@ -1,40 +1,14 @@
 # coding=utf-8
-"""
-
-approxerr_lotkavolt.py
-
-We compare the convergence behaviour of zeroth, first and second order
-methods applied to the negative log-likelihood of a Gaussian distribution.
-
-RESULT:
-    * The second order method seems to be able
-    to do anything that the first order method
-    can do and usually it does it better.
-    * I conjecture that far away from the truth 
-    the inverse Hessian has troubles because the
-    sensitivity in the Jacobian of m_par(t) appears
-    in a quadratic way. However, that is hard to falsify
-    because far away from the truth, neither works
-    well---at least for fairly low precisions, etc.
-    * The random search is just there to show how insanely
-    difficult this inverse problem is, optimisation-wise
-    (the likelihood is zero almost everywhere, so what would
-    a reasonable acceptance step be?). I find it not surprising
-    that it doesnt converge at all.
-
-DISCLAIMER:
-    * I am not sure about the readability of this script.
-"""
 
 import numpy as np
 import matplotlib.pyplot as plt
 
-from odefilters import odesolver
-from odefilters import linearised_odesolver as linsolver
-from odefilters import linearised_ode as linode
-from odefilters import statespace
-from odefilters import inverseproblem as ip
-from odefilters.sampling import metropolishastings_pham, metropolishastings_plang, metropolishastings_rw
+from difflikelihoods import odesolver
+from difflikelihoods import linearised_odesolver as linsolver
+from difflikelihoods import linearised_ode as linode
+from difflikelihoods import statespace
+from difflikelihoods import inverseproblem as ip
+from difflikelihoods.sampling import metropolishastings_pham, metropolishastings_plang, metropolishastings_rw
 
 
 def hamiltonian(nsamps, iplklhd, init_state, stepsize, nsteps, ninits):
@@ -44,8 +18,8 @@ def hamiltonian(nsamps, iplklhd, init_state, stepsize, nsteps, ninits):
     """
     samples, probs, ratio = metropolishastings_pham(iplklhd.potenteval, iplklhd.gradeval, iplklhd.hesseval,
         nsamps, init_state, stepsize, nsteps, ninits)
-    print("HAMILTONIAN")
-    print("ratio",  ratio)
+    #     print("HAMILTONIAN")
+    #     print("ratio",  ratio)
     return samples, probs
 
 
@@ -57,8 +31,8 @@ def langevin(nsamps, iplklhd, init_state, stepsize, ninits):
     """
     samples, probs, ratio = metropolishastings_plang(iplklhd.potenteval, iplklhd.gradeval, iplklhd.hesseval,
         nsamps, init_state, stepsize, ninits)
-    print("Langevin")
-    print("ratio",  ratio)
+    #     print("Langevin")
+    #     print("ratio",  ratio)
 
     return samples, probs
 
@@ -70,8 +44,8 @@ def randomwalk(nsamps, iplklhd, init_state, stepsize, ninits):
     using the InvProblemLklhd objects.
     """
     samples, probs, ratio = metropolishastings_rw(iplklhd.potenteval, nsamps, init_state, stepsize, ninits)
-    print("RW")
-    print("ratio",  ratio)
+    #     print("RW")
+    #     print("ratio",  ratio)
     return samples, probs
 
 

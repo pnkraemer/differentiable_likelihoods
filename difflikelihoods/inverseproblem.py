@@ -11,11 +11,11 @@ Todo:
 import sys
 from dataclasses import dataclass
 import numpy as np
-from odefilters import linearisation
-from odefilters import odesolver as solver
-from odefilters import linearised_odesolver as linsolver
-from odefilters import linearised_ode as linode
-from odefilters import auxiliary as aux
+from difflikelihoods import linearisation
+from difflikelihoods import odesolver as solver
+from difflikelihoods import linearised_odesolver as linsolver
+from difflikelihoods import linearised_ode as linode
+from difflikelihoods import auxiliary as aux
 
 
 @dataclass

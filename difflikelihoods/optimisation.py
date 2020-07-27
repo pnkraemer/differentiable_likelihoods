@@ -10,7 +10,7 @@ higher order objectives.
 
 from abc import ABC, abstractmethod
 from collections import namedtuple
-from odefilters import logdensity
+from difflikelihoods import logdensity
 
 
 import numpy as np
