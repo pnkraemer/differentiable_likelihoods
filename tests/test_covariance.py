@@ -9,7 +9,7 @@ Test whether covariance functions
 """
 import numpy as np
 import unittest
-from odefilters import covariance as cov
+from difflikelihoods import covariance as cov
 
 
 class TestCovLinAlg():

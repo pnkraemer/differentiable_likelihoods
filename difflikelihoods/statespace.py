@@ -15,7 +15,7 @@ Example:
     >>> print(traj)
 """
 import numpy as np
-from odefilters import auxiliary as aux
+from difflikelihoods import auxiliary as aux
 from abc import ABC, abstractmethod
 
 

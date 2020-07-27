@@ -1,11 +1,3 @@
-"""
-setup.py
-
-The basic outline is stolen from something written
-by Ivan Oreshnikov.
-
-Sorry Ivan :)
-"""
 
 import os
 
@@ -15,10 +7,10 @@ except ImportError:
     from distutils.core import setup
     from distutils.util import convert_path
 
-setup(name='odefilters',
+setup(name='difflikelihoods',
       version='0.99dev',
-      packages=['odefilters'],
+      packages=['difflikelihoods'],
       author='Nicholas Kraemer, Hans Kersting',
-      description='Probabilistic ODE Solver via Bayesian Filtering',
+      description='Differentiable likelihoods for fast inversion of likelihood-free dynamical systems',
       license='LICENSE.txt',
       long_description=open('README.md').read())

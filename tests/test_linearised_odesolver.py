@@ -7,10 +7,10 @@ test specialised variants.
 """
 import unittest
 import numpy as np
-from odefilters import statespace as stsp
-from odefilters import linearised_odesolver as linsolver
-from odefilters import linearised_ode as linode
-from odefilters import ode as standard_ode
+from difflikelihoods import statespace as stsp
+from difflikelihoods import linearised_odesolver as linsolver
+from difflikelihoods import linearised_ode as linode
+from difflikelihoods import ode as standard_ode
 
 
 class TestScalarODE(unittest.TestCase):

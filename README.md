@@ -1,6 +1,10 @@
-# ODEFILTERS
+# Differentiable likelihoods for fast inversion of 'Likelihood-free' dynamical systems
 
-This repository includes methods which allow to probabilistically solve ordinary differential equations as for instance presented by the papers below. This is a work in progress.
+This repository contains the python code that was used for the paper
+
+Kersting, H., Kr\"amer, N., Schiegg, M., Daniel, C., Tiemann,M., and Hennig, P.   Differentiable likelihoods for fast inversion of ‘likelihood-free’ dynamical systems. In Proceedings of the 37th International Conference on Machine Learning, Vienna, Austria, PMLR 119, 2020.
+
+and some related methods.
 
 
 ## Contents
@@ -17,17 +21,15 @@ pip install .
 ```
 which allows avoiding the `sys.path.append` malarkey.
 
-**Note:** Please do not use `python setup.py install`—for reasons.
-
 ## Requirements
 
-dataclasses (Python 3.7), numpy, scipy, matplotlib, unittest
+numpy, scipy, matplotlib
 
 ## Example
 ```python
-from odefilters import statespace
-from odefilters import odesolver
-from odefilters import ode
+from difflikelihoods import statespace
+from difflikelihoods import odesolver
+from difflikelihoods import ode
 ibm = statespace.IBM(q=2, dim=1)
 lin_ode = ode.LinearODE(t0=0.1, tmax=2.0, params=2.1, initval=0.9)
 solver = odesolver.ODESolver(ibm, filtertype="kalman")
@@ -35,22 +37,19 @@ tsteps, means, stdevs = solver.solve(lin_ode, stepsize=0.01)
 ```
 More examples are contained in the ```examples``` directory.
 
-## References
+## Experiments
 
-* Hairer, E., Norsett, S. P., Wanner, G. Solving Ordinary Differential Equations I: Nonstiff Problems. Springer, 2009.
+The experiments from the paper are in the ```experiments``` folder and sorted via `FigureN.ipynb`. 
 
-* Kersting, H. and Hennig, P. Active Uncertainty Calibration in Bayesian ODE Solvers. Proceedings of the Thirty-Second Conference on Uncertainty in Artificial Intelligence, 2016
+## Cite as
 
-* Kersting, H., Sullivan, T., Hennig, P. Convergence Rates of Gaussian ODE Filters  https://arxiv.org/abs/1807.09737, 2018
+Wherever relevant, please cite this work as
+```
+@article{kersting2020differentiable,
+  title={Differentiable Likelihoods for Fast Inversion of'Likelihood-Free'Dynamical Systems},
+  author={Kersting, Hans and Kr{\"a}mer, Nicholas and Schiegg, Martin and Daniel, Christian and Tiemann, Michael and Hennig, Philipp},
+  journal={Proceedings of the 37th International Conference on Machine Learning, Vienna, Austria, PMLR 119},
+  year={2020}
+}
 
-* Rasmussen, C. & Williams, K., Gaussian Processes for Machine Learning, MIT Press, 2006
-
-* Särkkä, S. Bayesian Filtering and Smoothing. Cambridge University Press, 2013.
-
-* Särkkä, S., Solin, A. Applied Stochastic Differential Equations, Cambridge University Press, 2019
-
-* Schober, M., Duvenaud, D. and Hennig, P. Probabilistic ODE Solvers with Runge-Kutta Means. https://arxiv.org/pdf/1406.2582.pdf
-
-* Schober, M., Särkkä, S. and Hennig, P. A Probabilistic Model for the Numerical Solution of Initial Value Problems. Statistics and Computing, 2019.
-
-* Tronarp, F., Kersting, H., Särkkä, S. and Hennig, P. Probabilistic Solutions to Ordinary Differential Equations as Non-Linear Bayesian FIltering: A New Perspective. arXiv:1810.03440, 2018.
+```

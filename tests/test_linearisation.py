@@ -21,12 +21,12 @@ Tests include:
 
 import unittest
 import numpy as np
-from odefilters import covariance as cov
-from odefilters import odesolver
-from odefilters import linearised_odesolver as linsolve
-from odefilters import linearised_ode as linode
-from odefilters import statespace
-from odefilters import linearisation
+from difflikelihoods import covariance as cov
+from difflikelihoods import odesolver
+from difflikelihoods import linearised_odesolver as linsolve
+from difflikelihoods import linearised_ode as linode
+from difflikelihoods import statespace
+from difflikelihoods import linearisation
 
 
 

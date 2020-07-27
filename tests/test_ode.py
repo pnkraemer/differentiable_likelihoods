@@ -15,7 +15,7 @@ vectorised evaluation.
 
 import unittest
 import numpy as np
-from odefilters import ode
+from difflikelihoods import ode
 
 
 # pylint: disable=E0110

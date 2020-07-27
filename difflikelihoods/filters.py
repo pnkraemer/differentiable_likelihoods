@@ -24,7 +24,7 @@ Example: Filtering the samples of a random walk
     >>> print(m, c)
 """
 import numpy as np
-from odefilters import auxiliary as aux
+from difflikelihoods import auxiliary as aux
 from abc import ABC, abstractmethod
 
 class Filter(ABC):

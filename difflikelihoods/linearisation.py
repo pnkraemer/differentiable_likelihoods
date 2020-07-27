@@ -23,7 +23,7 @@ Example:
 
 import numpy as np
 import scipy.sparse.linalg as spspl
-from odefilters import covariance as cov
+from difflikelihoods import covariance as cov
 
 
 def compute_linearisation(ssm, initial_value, derivative_data, prdct_tsteps):

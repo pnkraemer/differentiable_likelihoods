@@ -25,7 +25,7 @@ Todo:
 
 
 import numpy as np
-from odefilters import filters
+from difflikelihoods import filters
 from abc import ABC
 
 

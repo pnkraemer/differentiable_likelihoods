@@ -13,7 +13,7 @@ for initialisation and evaluation (standard and vectorised).
 
 import unittest
 import numpy as np
-from odefilters import linearised_ode as linode
+from difflikelihoods import linearised_ode as linode
 
 
 class TestLinearisedODE(unittest.TestCase):

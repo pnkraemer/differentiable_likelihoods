@@ -14,7 +14,7 @@ Further description of this class of ODEs:
 
 from abc import ABC, abstractmethod
 import numpy as np
-from odefilters import ode
+from difflikelihoods import ode
 
 
 class LinearisedODE(ode.ODE, ABC):

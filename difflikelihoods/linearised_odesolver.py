@@ -17,8 +17,8 @@ Note:
 """
 
 import numpy as np
-from odefilters import filters
-from odefilters import odesolver
+from difflikelihoods import filters
+from difflikelihoods import odesolver
 
 
 class LinearisedODESolver(odesolver.ODESolver):

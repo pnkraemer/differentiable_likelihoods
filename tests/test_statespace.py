@@ -12,7 +12,7 @@ Tests include:
 """
 import unittest
 import numpy as np
-from odefilters import statespace as stsp
+from difflikelihoods import statespace as stsp
 
 
 class TestInvariantSSM(unittest.TestCase):

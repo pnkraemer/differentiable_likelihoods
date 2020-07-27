@@ -15,9 +15,9 @@ Reference for TestScalarODE:
 
 import unittest
 import numpy as np
-from odefilters import statespace as stsp
-from odefilters import odesolver as oso
-from odefilters import ode
+from difflikelihoods import statespace as stsp
+from difflikelihoods import odesolver as oso
+from difflikelihoods import ode
 
 
 class TestScalarODE(unittest.TestCase):

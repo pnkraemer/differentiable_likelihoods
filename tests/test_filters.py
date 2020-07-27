@@ -9,8 +9,8 @@ We test two things;
 
 import unittest
 import numpy as np
-from odefilters import filters
-from odefilters import statespace
+from difflikelihoods import filters
+from difflikelihoods import statespace
 
 class TestFilter(unittest.TestCase):
     """

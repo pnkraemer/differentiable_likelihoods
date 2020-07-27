@@ -4,7 +4,7 @@ test_optimise.py
 """
 import unittest
 import numpy as np
-from odefilters import optimise
+from difflikelihoods import optimise
 
 class TestOptimiseQuadraticFunction(unittest.TestCase):
     """
