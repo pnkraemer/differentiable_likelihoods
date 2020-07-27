@@ -2,7 +2,7 @@
 
 This repository contains the python code that was used for the paper
 
-**Kersting, H., Krämer, N., Schiegg, M., Daniel, C., Tiemann, M., and Hennig, P.   Differentiable likelihoods for fast inversion of ‘likelihood-free’ dynamical systems. In: Proceedings of the 37th International Conference on Machine Learning, Vienna, Austria, PMLR 119, 2020.**
+[1] Kersting, H., Krämer, N., Schiegg, M., Daniel, C., Tiemann, M., and Hennig, P.  **Differentiable likelihoods for fast inversion of ‘likelihood-free’ dynamical systems.** In: Proceedings of the 37th International Conference on Machine Learning, Vienna, Austria, PMLR 119, 2020.**
 
 and some related methods.
 
