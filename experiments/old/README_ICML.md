@@ -1,39 +1,21 @@
-# ODEFILTERS
+## Content
 
-This repository includes methods which allow to probabilistically solve ordinary differential equations as for instance presented by the papers below. This is a work in progress.
+This repository contains the experiments that reproduce the figures in the paper "Likelihood for 'Likelihood-Free' Dynamical Systems" (submission ID 
+1580); see e.g. Figure4bottom_code for the code that produces the bottom plot 
+of Figure 4. The code uses Gaussian ODE Filtering as a forward solver. The 
+code for Gaussian ODE Filtering is to be found in the sub-repo odesolvers. 
+Compared to previous ODE Filtering publications, the heart of the new
+methods is the computation of the Jacobian estimator J. This computation
+is contained in the file odesolvers/linearisation.py.
 
+## Important Remarks
 
-## Contents
-
-Linear state space models, Kalman filter, probabilistic solvers for ODEs including different methods for generating measurements (see Kersting and Hennig, 2016), Markov Chain Monte Carlo simulation, Bayesian quadrature, Gaussian process regression, Clenshaw-Curtis quadrature and more.
-<p align="center">
-<img src="figures/hfn_unc.png" width="250px"><img src="figures/car_movement.png" width="250px"><img src="figures/res2bod.png" width="250px">
-</p>
-
-## Installation
-In the root directory, run
-```
-pip install .
-```
-which allows avoiding the `sys.path.append` malarkey.
-
-**Note:** Please do not use `python setup.py install`—for reasons.
+* The figures were edited afterwards to make them look nice for the paper.
+* For Figure 4 bottom, random walk Monte Carlo (RWM) does not even find likelihood values of at least 10^{-300}. Hence, we added a line at 10^{-300} for RWM in the paper (see caption of Figure 4).
 
 ## Requirements
 
 dataclasses (Python 3.7), numpy, scipy, matplotlib, unittest
-
-## Example
-```python
-from odefilters import statespace
-from odefilters import odesolver
-from odefilters import ode
-ibm = statespace.IBM(q=2, dim=1)
-lin_ode = ode.LinearODE(t0=0.1, tmax=2.0, params=2.1, initval=0.9)
-solver = odesolver.ODESolver(ibm, filtertype="kalman")
-tsteps, means, stdevs = solver.solve(lin_ode, stepsize=0.01)
-```
-More examples are contained in the ```examples``` directory.
 
 ## References
 

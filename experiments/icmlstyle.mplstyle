@@ -1,0 +1,53 @@
+# https://matplotlib.org/3.2.1/tutorials/introductory/customizing.html
+
+lines.linewidth : 0.8
+lines.markersize : 3.
+# axes.prop_cycle : cycler(color=['A51E37', 'B4A069', '32414B', (65/255, 90/255, 140/255), (125/255, 165/255, 75/255), (200/255, 80/255, 60/255), (80/255, 170/255, 200/255)])
+axes.edgecolor : black
+axes.linewidth : 0.5
+axes.spines.right : False
+axes.spines.top : False
+
+xtick.major.size : 1
+xtick.minor.size : 1
+ytick.major.size : 1
+ytick.minor.size : 1
+xtick.major.width : 0.5
+xtick.minor.width : 0.5
+ytick.major.width : 0.5
+ytick.minor.width : 0.5
+grid.linestyle: -
+grid.linewidth: 1
+font.size: 7
+axes.titlesize      : 7   # fontsize of the axes title
+axes.labelsize      : 7  # fontsize of the x any y labels
+lines.markeredgecolor : black
+lines.markeredgewidth : 0.35
+text.usetex : False
+text.latex.preamble: \usepackage{times}
+
+figure.figsize: 3.3, 1.5
+figure.dpi : 500
+font.family         : sans-serif
+font.style          : normal
+font.variant        : normal
+font.weight         : normal
+font.stretch        : normal
+
+font.sans-serif     : Arial
+
+legend.framealpha : 1.
+legend.frameon: True
+legend.fancybox: False
+legend.edgecolor: black
+# xtick.labelsize : small
+# ytick.labelsize : small
+legend.fontsize : 6
+legend.handlelength : 0.9
+legend.borderpad : 0.25
+
+patch.linewidth : 0.25
+
+
+xtick.labelsize : 6
+ytick.labelsize : 6
