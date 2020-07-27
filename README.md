@@ -13,7 +13,7 @@ Linear state space models, Kalman filter, probabilistic solvers for ODEs includi
 
 
 <p align="center">
-<img src="./experiments/figures/figure1_firstpage.png" height="250px"><img src="./experiments/figures/figure2_contours.png" height="250px"><img src="./experiments/figures/figure3_arrows.png" height="250px">
+<img src="./experiments/figures/figure1_firstpage.png" height="250px"><img src="./experiments/figures/figure2_contours.png" height="250px">
 </p>
 
 ## Installation
