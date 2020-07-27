@@ -11,12 +11,8 @@ and some related methods.
 
 Linear state space models, Kalman filter, probabilistic solvers for ODEs including different methods for generating measurements (see Kersting and Hennig, 2016), Markov Chain Monte Carlo simulation, Bayesian quadrature, Gaussian process regression, Clenshaw-Curtis quadrature and more.
 
-![](./figures/figure1_firstpage.png)
+![](./experiments/figures/figure1_firstpage.png)
 
-
-<p align="center">
-<img src="figures/hfn_unc.png" width="250px"><img src="figures/car_movement.png" width="250px"><img src="figures/res2bod.png" width="250px">
-</p>
 
 ## Installation
 In the root directory, run
